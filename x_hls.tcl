@@ -4,4 +4,4 @@
 # Set to 3: to run setup, synthesis, RTL simulation and RTL synthesis
 # Any other value will run setup only
  
-set hls_exec 0
+set hls_exec 1

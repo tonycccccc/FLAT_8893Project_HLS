@@ -9,9 +9,14 @@ add_files flat.h
 add_files utils.cpp
 add_files convolution.cpp 
 # Add test bench & files
-add_files -tb flat_test.cpp
+add_files -tb sim.cpp
 # Add memory files
-add_files -tb ./query_file.bin
+add_files -tb ./bin/query.bin
+add_files -tb ./bin/key.bin
+add_files -tb ./bin/bias.bin
+add_files -tb ./bin/value.bin
+add_files -tb ./bin/golden_output_one.bin
+
 
 # ########################################################
 # Create a solution
