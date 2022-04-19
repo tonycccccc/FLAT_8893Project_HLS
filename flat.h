@@ -17,7 +17,7 @@
 #ifdef  CSIM_DEBUG
     typedef float data_t;
 #else
-    typedef ap_fixed<24,6> data_t;
+    typedef ap_fixed<16,6> data_t;
 #endif 
     
 #define IF_ROW 0 //Length Granularity

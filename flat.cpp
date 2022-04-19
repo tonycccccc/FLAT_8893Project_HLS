@@ -1,7 +1,8 @@
 #include "flat.h"
 #include <iostream>
-#include <math.h>
 #include <limits>
+// #include <cmath>
+#include "hls_math.h"
 
 void FlatDataflow(
         data_t query[576][64][16][64],
@@ -88,15 +89,15 @@ void Fused_Logit_Operator(data_t query_buffer[BATCH_B][QUERY_LENGTH_F][NUM_HEAD_
 void Softmax(data_t logit_out[BATCH_B][NUM_HEAD_N][QUERY_LENGTH_F][KEY_LENGTH_T], data_t softmanx_out[BATCH_B][NUM_HEAD_N][QUERY_LENGTH_F][KEY_LENGTH_T])
 {
     //BNFT -> BNFT
-    for (int b = 0; b < BATCH_B; ++b)
+    for (int b = 0; b < BATCH_B; ++b) //64
     {
-        for (int n = 0; n < NUM_HEAD_N; ++n)
+        for (int n = 0; n < NUM_HEAD_N; ++n) //16
         {
-            for (int f = 0; f < QUERY_LENGTH_F; ++f)
+            for (int f = 0; f < QUERY_LENGTH_F; ++f) //64
             {
                 //data_t max = std::numeric_limits<float>::min();
                 data_t max = -1;
-                for (int t = 0; t < KEY_LENGTH_T; ++t)
+                for (int t = 0; t < KEY_LENGTH_T; ++t) //64
                 {
 					//std::cout << max << std::endl;
                     if (logit_out[b][n][f][t] > max)
@@ -109,7 +110,8 @@ void Softmax(data_t logit_out[BATCH_B][NUM_HEAD_N][QUERY_LENGTH_F][KEY_LENGTH_T]
                 data_t sum = 0;
                 for (int t = 0; t < KEY_LENGTH_T; ++t)
                 {
-                    buffer[t] = exp(logit_out[b][n][f][t]- max);
+                    data_t tmp = logit_out[b][n][f][t]- max;
+                    buffer[t] = exp(tmp);
                     sum = sum + buffer[t];
 					// std::cout << buffer[t] << std::endl;
 					// std::cout << sum << std::endl;
