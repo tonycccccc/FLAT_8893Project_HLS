@@ -23,5 +23,21 @@ static void computeLogit(const data_t (&query_matrix)[ROW][COLUMN], const data_t
 
 static void computeAttention(const data_t (&logit)[ROW][COLUMN], const data_t (&value_matrix)[ROW][COLUMN], data_t (&output)[ROW][COLUMN])
 {
+systolic1:
+    for (int k = 0; k < COLUMN; k++) {
+       #pragma HLS LOOP_TRIPCOUNT min=ROW max=ROW
+       #pragma HLS PIPELINE II=1
+    systolic2:
+        for (int i = 0; i < ROW; i++) {
+        systolic3:
+            for (int j = 0; j < ROW; j++) {
+                int last = (k == 0) ? 0 : output[i][j];
+                int a_val = (i < ROW && k < COLUMN) ? logit[i][k] : 0;
+                int b_val = (k < ROW && j < COMUMN) ? value_matrix[k][j] : 0;
+                int result = last + a_val * b_val;
 
+                output[i][j] = result;
+            }
+        }
+    }
 }
