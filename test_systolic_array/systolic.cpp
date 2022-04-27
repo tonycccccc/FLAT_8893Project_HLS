@@ -31,10 +31,10 @@ systolic1:
         for (int i = 0; i < ROW; i++) {
         systolic3:
             for (int j = 0; j < ROW; j++) {
-                int last = (k == 0) ? 0 : output[i][j];
-                int a_val = (i < ROW && k < COLUMN) ? logit[i][k] : 0;
-                int b_val = (k < ROW && j < COMUMN) ? value_matrix[k][j] : 0;
-                int result = last + a_val * b_val;
+                data_t last = (k == 0) ? 0 : output[i][j];
+                data_t a_val = (i < ROW && k < COLUMN) ? logit[i][k] : 0;
+                data_t b_val = (k < ROW && j < COMUMN) ? value_matrix[k][j] : 0;
+                data_t result = last + a_val * b_val;
 
                 output[i][j] = result;
             }
