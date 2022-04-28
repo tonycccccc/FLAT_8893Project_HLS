@@ -132,7 +132,7 @@ static void Logit_MM(int B, int N, data_t query_buffer[BATCH_B][QUERY_LENGTH_F][
 
 				// Write back
 				if (f >= QUERY_LENGTH_F-1 && h == HEAD_DIM_H-1) {
-					out_buffer[B][N][f-QUERY_LENGTH_F+1][t] = local_out[t][HEAD_DIM_H-1];
+					out_buffer[B][N][f-QUERY_LENGTH_F+1-t][t] = local_out[t][HEAD_DIM_H-1];
 				}
 			}
 		}
