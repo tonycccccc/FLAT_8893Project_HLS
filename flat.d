@@ -20,4 +20,36 @@ flat.o: flat.cpp flat.h \
  /tools/software/xilinx/Vitis_HLS/2021.1//include/ap_int_special.h \
  /tools/software/xilinx/Vitis_HLS/2021.1//include/ap_fixed_ref.h \
  /tools/software/xilinx/Vitis_HLS/2021.1//include/ap_fixed_special.h \
- config.h
+ config.h /tools/software/xilinx/Vitis_HLS/2021.1//include/hls_math.h \
+ /tools/software/xilinx/Vitis_HLS/2021.1//include/hls_half.h \
+ /tools/software/xilinx/Vitis_HLS/2021.1//include/hls_hotbm_apfixed.h \
+ /tools/software/xilinx/Vitis_HLS/2021.1//include/ap_fixed.h \
+ /tools/software/xilinx/Vitis_HLS/2021.1//include/ap_int.h \
+ /tools/software/xilinx/Vitis_HLS/2021.1//include/utils/x_hls_defines.h \
+ /tools/software/xilinx/Vitis_HLS/2021.1//include/utils/x_hls_utils.h \
+ /tools/software/xilinx/Vitis_HLS/2021.1//include/hls_cordic_apfixed.h \
+ /tools/software/xilinx/Vitis_HLS/2021.1//include/hls_exp_apfixed.h \
+ /tools/software/xilinx/Vitis_HLS/2021.1//include/hls_log_apfixed.h \
+ /tools/software/xilinx/Vitis_HLS/2021.1//include/hls_sqrt_apfixed.h \
+ /tools/software/xilinx/Vitis_HLS/2021.1//include/hls_round_copysign_apfixed.h \
+ /tools/software/xilinx/Vitis_HLS/2021.1//include/hls_pow_apfixed.h \
+ /tools/software/xilinx/Vitis_HLS/2021.1//include/hls_diff_apfixed.h \
+ /tools/software/xilinx/Vitis_HLS/2021.1//include/hls_comparison_apfixed.h \
+ /tools/software/xilinx/Vitis_HLS/2021.1//include/hls_frexp_apfixed.h \
+ /tools/software/xilinx/Vitis_HLS/2021.1//include/hls_modf_apfixed.h \
+ /tools/software/xilinx/Vitis_HLS/2021.1//include/hls_isequal_isnotequal_apfixed.h \
+ /tools/software/xilinx/Vitis_HLS/2021.1//include/hls_all_any_apfixed.h \
+ /tools/software/xilinx/Vitis_HLS/2021.1//include/hls_select_bitselect_apfixed.h \
+ /tools/software/xilinx/Vitis_HLS/2021.1//include/hls_erf_apfixed.h \
+ /tools/software/xilinx/Vitis_HLS/2021.1//include/hls_fmod_rem_quo_remainder_divide_apfixed.h \
+ /tools/software/xilinx/Vitis_HLS/2021.1//include/hls_lgamma_apfixed.h \
+ /tools/software/xilinx/Vitis_HLS/2021.1//include/utils/x_hls_traits.h \
+ /tools/software/xilinx/Vitis_HLS/2021.1//include/hls_x_complex.h \
+ /tools/software/xilinx/Vitis_HLS/2021.1//include/utils/x_hls_utils.h \
+ /tools/software/xilinx/Vitis_HLS/2021.1//include/utils/x_hls_defines.h \
+ /tools/software/xilinx/Vitis_HLS/2021.1//include/hls_tgamma_apfixed.h \
+ /tools/software/xilinx/Vitis_HLS/2021.1//include/hls_fract_apfixed.h \
+ /tools/software/xilinx/Vitis_HLS/2021.1//include/hls_mad_apfixed.h \
+ /tools/software/xilinx/Vitis_HLS/2021.1//include/hls_cbrt_apfixed.h \
+ /tools/software/xilinx/Vitis_HLS/2021.1//include/hls_hypot_apfixed.h \
+ /tools/software/xilinx/Vitis_HLS/2021.1//include/hls_ldexp_apfixed.h

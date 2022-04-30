@@ -6,7 +6,7 @@ set_top FlatDataflow
 
 # Add design files
 add_files flat.cpp
-# add_files utils.cpp
+add_files utils.cpp
 # add_files flat.cpp 
 # Add test bench & files
 # add_files -tb sim.cpp
@@ -25,12 +25,13 @@ open_solution "solution1" -flow_target vivado
 set_part {xc7z020-clg400-1}
 create_clock -period 10 -name default
 
+csynth_design
+
 # Source x_hls.tcl to determine which steps to execute
 # source x_hls.tcl
 # csim_design
 # Set any optimization directives
 # End of directives
-csynth_design
 # if {$hls_exec == 1} {
 # 	# Run Synthesis and Exit
 # 	csynth_design

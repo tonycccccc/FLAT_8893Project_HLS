@@ -1,8 +1,7 @@
-#include "flat.h"
 #include <iostream>
 #include <limits>
-// #include <cmath>
 #include "hls_math.h"
+#include "flat.h"
 
 void FlatDataflow(
         data_t query[576][64][16][64],
@@ -43,16 +42,13 @@ void FlatDataflow(
         //STEP 2: Implement different FLAT tilings here
         // USE BASELINE Implementation for now
         Fused_Logit_Operator(query_buffer, key_buffer, bias_buffer, Logit_out_buffer);
-	    //std::cout << "test1" << std::endl;
         Softmax(Logit_out_buffer, Softmax_out_buffer);
-	    //std::cout << "test2" << std::endl;
-
         Fused_Attention_Operator(Softmax_out_buffer, value_buffer, attention_out_buffer);
-	    //std::cout << "test3" << std::endl;
+
+        Pipelined_FLAT(query_buffer, key_buffer, bias_buffer, value_buffer, attention_out_buffer;)
 
         //Save_Partial_Output();
         Store_Output_to_DRAM(attention_out_buffer, attention_out, idx);
-	    //std::cout << "test4" << std::endl;
 
     }
 }

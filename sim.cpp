@@ -35,7 +35,6 @@ void read_bin_files()
 {
     //Query Feature Map
     ifstream ifs_query("./bin/query.bin", ios::in|ios::binary);
-	ifs_query.exceptions(std::ifstream::failbit);
     ifs_query.read((char*)(***attention_layer_query_input), 576*64*16*64*sizeof(float));
     ifs_query.close();
 
