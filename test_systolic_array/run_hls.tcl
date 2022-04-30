@@ -2,7 +2,7 @@ open_project Systolic
 
 set_top systolic_array
 
-#add_files systolic.h
+add_files systolic.h
 add_files systolic.cpp
 # add_files -tb systolic_test.cpp
 

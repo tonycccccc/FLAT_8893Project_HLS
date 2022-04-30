@@ -1,169 +1,31 @@
-
-****** Vitis HLS - High-Level Synthesis from C, C++ and OpenCL v2020.2 (64-bit)
-  **** SW Build 3064766 on Wed Nov 18 09:12:47 MST 2020
-  **** IP Build 3064653 on Wed Nov 18 14:17:31 MST 2020
-    ** Copyright 1986-2020 Xilinx, Inc. All Rights Reserved.
-
-source /tools/software/xilinx/Vitis_HLS/2020.2/scripts/vitis_hls/hls.tcl -notrace
-INFO: [HLS 200-10] Running '/tools/software/xilinx/Vitis_HLS/2020.2/bin/unwrapped/lnx64.o/vitis_hls'
-INFO: [HLS 200-10] For user 'zchen752' on host 'ece-linlab12.ece.gatech.edu' (Linux_x86_64 version 3.10.0-1160.62.1.el7.x86_64) on Fri Apr 29 20:42:01 EDT 2022
+INFO: [HLS 200-10] Running '/tools/software/xilinx/Vitis_HLS/2021.1/bin/unwrapped/lnx64.o/vitis_hls'
+INFO: [HLS 200-10] For user 'jnativ3' on host 'ece-linlab13.ece.gatech.edu' (Linux_x86_64 version 3.10.0-1160.62.1.el7.x86_64) on Sat Apr 30 19:00:06 EDT 2022
 INFO: [HLS 200-10] On os "Red Hat Enterprise Linux Workstation release 7.9 (Maipo)"
-INFO: [HLS 200-10] In directory '/nethome/zchen752/FLAT_8893Project_HLS/test_systolic_array'
-Sourcing Tcl script 'run_hls.tcl'
-INFO: [HLS 200-1510] Running: open_project Systolic 
-INFO: [HLS 200-10] Opening project '/nethome/zchen752/FLAT_8893Project_HLS/test_systolic_array/Systolic'.
+INFO: [HLS 200-10] In directory '/nethome/jnativ3/ece8893/project2/test_systolic_array'
+Sourcing Tcl script '/nethome/jnativ3/ece8893/project2/test_systolic_array/test_systolic_array/solution1/csim.tcl'
+INFO: [HLS 200-1510] Running: open_project test_systolic_array 
+INFO: [HLS 200-10] Opening project '/nethome/jnativ3/ece8893/project2/test_systolic_array/test_systolic_array'.
 INFO: [HLS 200-1510] Running: set_top systolic_array 
 INFO: [HLS 200-1510] Running: add_files systolic.cpp 
 INFO: [HLS 200-10] Adding design file 'systolic.cpp' to the project
-INFO: [HLS 200-1510] Running: open_solution solution2 -flow_target vivado 
-INFO: [HLS 200-10] Creating and opening solution '/nethome/zchen752/FLAT_8893Project_HLS/test_systolic_array/Systolic/solution2'.
-INFO: [HLS 200-1505] Using flow_target 'vivado'
-Resolution: For help on HLS 200-1505 see www.xilinx.com/cgi-bin/docs/rdoc?v=2020.2;t=hls+guidance;d=200-1505.html
-INFO: [HLS 200-1510] Running: set_part xc7z020-clg400-1 
-INFO: [HLS 200-10] Setting target device to 'xc7z020-clg400-1'
-INFO: [HLS 200-1510] Running: create_clock -period 10 -name default 
+INFO: [HLS 200-1510] Running: add_files systolic.h 
+INFO: [HLS 200-10] Adding design file 'systolic.h' to the project
+INFO: [HLS 200-1510] Running: add_files -tb systolic_test.cpp 
+INFO: [HLS 200-10] Adding test bench file 'systolic_test.cpp' to the project
+INFO: [HLS 200-1510] Running: open_solution solution1 -flow_target vivado 
+INFO: [HLS 200-10] Opening solution '/nethome/jnativ3/ece8893/project2/test_systolic_array/test_systolic_array/solution1'.
 INFO: [SYN 201-201] Setting up clock 'default' with a period of 10ns.
-INFO: [HLS 200-1510] Running: csynth_design 
-INFO: [HLS 200-111] Finished File checks and directory preparation: CPU user time: 0.01 seconds. CPU system time: 0 seconds. Elapsed time: 0.01 seconds; current allocated memory: 238.662 MB.
-INFO: [HLS 200-10] Analyzing design file 'systolic.cpp' ... 
-WARNING: [HLS 207-910] 'ROW' macro redefined: systolic.cpp:3:9
-INFO: [HLS 207-71] previous definition is here: ./systolic.h:8:9
-WARNING: [HLS 207-910] 'COLUMN' macro redefined: systolic.cpp:4:9
-INFO: [HLS 207-71] previous definition is here: ./systolic.h:9:9
-WARNING: [HLS 207-5527] unexpected pragma parameter 'mode': systolic.cpp:13:23
-WARNING: [HLS 207-5527] unexpected pragma parameter 'mode': systolic.cpp:14:23
-WARNING: [HLS 207-5527] unexpected pragma parameter 'mode': systolic.cpp:15:23
-WARNING: [HLS 207-5527] unexpected pragma parameter 'mode': systolic.cpp:16:23
-WARNING: [HLS 207-5527] unexpected pragma parameter 'type': systolic.cpp:33:57
-WARNING: [HLS 207-5527] unexpected pragma parameter 'type': systolic.cpp:34:55
-WARNING: [HLS 207-5527] unexpected pragma parameter 'type': systolic.cpp:35:50
-WARNING: [HLS 207-5527] unexpected pragma parameter 'type': systolic.cpp:82:57
-WARNING: [HLS 207-5527] unexpected pragma parameter 'type': systolic.cpp:83:51
-INFO: [HLS 200-111] Finished Source Code Analysis and Preprocessing: CPU user time: 1.02 seconds. CPU system time: 0.15 seconds. Elapsed time: 1.46 seconds; current allocated memory: 239.815 MB.
-INFO: [HLS 200-777] Using interface defaults for 'Vivado' flow target.
-INFO: [HLS 214-186] Unrolling loop 'systolic_t' (systolic.cpp:44:9) in function 'computeLogit' completely with a factor of 32 (systolic.cpp:44:9)
-INFO: [HLS 214-186] Unrolling loop 'systolic_h' (systolic.cpp:47:13) in function 'computeLogit' completely with a factor of 32 (systolic.cpp:47:13)
-INFO: [HLS 214-186] Unrolling loop 'systolic_h' (systolic.cpp:47:13) in function 'computeLogit' completely with a factor of 32 (systolic.cpp:47:13)
-INFO: [HLS 214-186] Unrolling loop 'systolic_h' (systolic.cpp:47:13) in function 'computeLogit' completely with a factor of 32 (systolic.cpp:47:13)
-INFO: [HLS 214-186] Unrolling loop 'systolic_h' (systolic.cpp:47:13) in function 'computeLogit' completely with a factor of 32 (systolic.cpp:47:13)
-INFO: [HLS 214-186] Unrolling loop 'systolic_h' (systolic.cpp:47:13) in function 'computeLogit' completely with a factor of 32 (systolic.cpp:47:13)
-INFO: [HLS 214-186] Unrolling loop 'systolic_h' (systolic.cpp:47:13) in function 'computeLogit' completely with a factor of 32 (systolic.cpp:47:13)
-INFO: [HLS 214-186] Unrolling loop 'systolic_h' (systolic.cpp:47:13) in function 'computeLogit' completely with a factor of 32 (systolic.cpp:47:13)
-INFO: [HLS 214-186] Unrolling loop 'systolic_h' (systolic.cpp:47:13) in function 'computeLogit' completely with a factor of 32 (systolic.cpp:47:13)
-INFO: [HLS 214-186] Unrolling loop 'systolic_h' (systolic.cpp:47:13) in function 'computeLogit' completely with a factor of 32 (systolic.cpp:47:13)
-INFO: [HLS 214-186] Unrolling loop 'systolic_h' (systolic.cpp:47:13) in function 'computeLogit' completely with a factor of 32 (systolic.cpp:47:13)
-INFO: [HLS 214-186] Unrolling loop 'systolic_h' (systolic.cpp:47:13) in function 'computeLogit' completely with a factor of 32 (systolic.cpp:47:13)
-INFO: [HLS 214-186] Unrolling loop 'systolic_h' (systolic.cpp:47:13) in function 'computeLogit' completely with a factor of 32 (systolic.cpp:47:13)
-INFO: [HLS 214-186] Unrolling loop 'systolic_h' (systolic.cpp:47:13) in function 'computeLogit' completely with a factor of 32 (systolic.cpp:47:13)
-INFO: [HLS 214-186] Unrolling loop 'systolic_h' (systolic.cpp:47:13) in function 'computeLogit' completely with a factor of 32 (systolic.cpp:47:13)
-INFO: [HLS 214-186] Unrolling loop 'systolic_h' (systolic.cpp:47:13) in function 'computeLogit' completely with a factor of 32 (systolic.cpp:47:13)
-INFO: [HLS 214-186] Unrolling loop 'systolic_h' (systolic.cpp:47:13) in function 'computeLogit' completely with a factor of 32 (systolic.cpp:47:13)
-INFO: [HLS 214-186] Unrolling loop 'systolic_h' (systolic.cpp:47:13) in function 'computeLogit' completely with a factor of 32 (systolic.cpp:47:13)
-INFO: [HLS 214-186] Unrolling loop 'systolic_h' (systolic.cpp:47:13) in function 'computeLogit' completely with a factor of 32 (systolic.cpp:47:13)
-INFO: [HLS 214-186] Unrolling loop 'systolic_h' (systolic.cpp:47:13) in function 'computeLogit' completely with a factor of 32 (systolic.cpp:47:13)
-INFO: [HLS 214-186] Unrolling loop 'systolic_h' (systolic.cpp:47:13) in function 'computeLogit' completely with a factor of 32 (systolic.cpp:47:13)
-INFO: [HLS 214-186] Unrolling loop 'systolic_h' (systolic.cpp:47:13) in function 'computeLogit' completely with a factor of 32 (systolic.cpp:47:13)
-INFO: [HLS 214-186] Unrolling loop 'systolic_h' (systolic.cpp:47:13) in function 'computeLogit' completely with a factor of 32 (systolic.cpp:47:13)
-INFO: [HLS 214-186] Unrolling loop 'systolic_h' (systolic.cpp:47:13) in function 'computeLogit' completely with a factor of 32 (systolic.cpp:47:13)
-INFO: [HLS 214-186] Unrolling loop 'systolic_h' (systolic.cpp:47:13) in function 'computeLogit' completely with a factor of 32 (systolic.cpp:47:13)
-INFO: [HLS 214-186] Unrolling loop 'systolic_h' (systolic.cpp:47:13) in function 'computeLogit' completely with a factor of 32 (systolic.cpp:47:13)
-INFO: [HLS 214-186] Unrolling loop 'systolic_h' (systolic.cpp:47:13) in function 'computeLogit' completely with a factor of 32 (systolic.cpp:47:13)
-INFO: [HLS 214-186] Unrolling loop 'systolic_h' (systolic.cpp:47:13) in function 'computeLogit' completely with a factor of 32 (systolic.cpp:47:13)
-INFO: [HLS 214-186] Unrolling loop 'systolic_h' (systolic.cpp:47:13) in function 'computeLogit' completely with a factor of 32 (systolic.cpp:47:13)
-INFO: [HLS 214-186] Unrolling loop 'systolic_h' (systolic.cpp:47:13) in function 'computeLogit' completely with a factor of 32 (systolic.cpp:47:13)
-INFO: [HLS 214-186] Unrolling loop 'systolic_h' (systolic.cpp:47:13) in function 'computeLogit' completely with a factor of 32 (systolic.cpp:47:13)
-INFO: [HLS 214-186] Unrolling loop 'systolic_h' (systolic.cpp:47:13) in function 'computeLogit' completely with a factor of 32 (systolic.cpp:47:13)
-INFO: [HLS 214-186] Unrolling loop 'systolic_h' (systolic.cpp:47:13) in function 'computeLogit' completely with a factor of 32 (systolic.cpp:47:13)
-INFO: [HLS 214-186] Unrolling loop 'systolic2' (systolic.cpp:89:9) in function 'computeAttention' completely with a factor of 32 (systolic.cpp:89:9)
-INFO: [HLS 214-186] Unrolling loop 'systolic3' (systolic.cpp:92:13) in function 'computeAttention' completely with a factor of 32 (systolic.cpp:92:13)
-INFO: [HLS 214-186] Unrolling loop 'systolic3' (systolic.cpp:92:13) in function 'computeAttention' completely with a factor of 32 (systolic.cpp:92:13)
-INFO: [HLS 214-186] Unrolling loop 'systolic3' (systolic.cpp:92:13) in function 'computeAttention' completely with a factor of 32 (systolic.cpp:92:13)
-INFO: [HLS 214-186] Unrolling loop 'systolic3' (systolic.cpp:92:13) in function 'computeAttention' completely with a factor of 32 (systolic.cpp:92:13)
-INFO: [HLS 214-186] Unrolling loop 'systolic3' (systolic.cpp:92:13) in function 'computeAttention' completely with a factor of 32 (systolic.cpp:92:13)
-INFO: [HLS 214-186] Unrolling loop 'systolic3' (systolic.cpp:92:13) in function 'computeAttention' completely with a factor of 32 (systolic.cpp:92:13)
-INFO: [HLS 214-186] Unrolling loop 'systolic3' (systolic.cpp:92:13) in function 'computeAttention' completely with a factor of 32 (systolic.cpp:92:13)
-INFO: [HLS 214-186] Unrolling loop 'systolic3' (systolic.cpp:92:13) in function 'computeAttention' completely with a factor of 32 (systolic.cpp:92:13)
-INFO: [HLS 214-186] Unrolling loop 'systolic3' (systolic.cpp:92:13) in function 'computeAttention' completely with a factor of 32 (systolic.cpp:92:13)
-INFO: [HLS 214-186] Unrolling loop 'systolic3' (systolic.cpp:92:13) in function 'computeAttention' completely with a factor of 32 (systolic.cpp:92:13)
-INFO: [HLS 214-186] Unrolling loop 'systolic3' (systolic.cpp:92:13) in function 'computeAttention' completely with a factor of 32 (systolic.cpp:92:13)
-INFO: [HLS 214-186] Unrolling loop 'systolic3' (systolic.cpp:92:13) in function 'computeAttention' completely with a factor of 32 (systolic.cpp:92:13)
-INFO: [HLS 214-186] Unrolling loop 'systolic3' (systolic.cpp:92:13) in function 'computeAttention' completely with a factor of 32 (systolic.cpp:92:13)
-INFO: [HLS 214-186] Unrolling loop 'systolic3' (systolic.cpp:92:13) in function 'computeAttention' completely with a factor of 32 (systolic.cpp:92:13)
-INFO: [HLS 214-186] Unrolling loop 'systolic3' (systolic.cpp:92:13) in function 'computeAttention' completely with a factor of 32 (systolic.cpp:92:13)
-INFO: [HLS 214-186] Unrolling loop 'systolic3' (systolic.cpp:92:13) in function 'computeAttention' completely with a factor of 32 (systolic.cpp:92:13)
-INFO: [HLS 214-186] Unrolling loop 'systolic3' (systolic.cpp:92:13) in function 'computeAttention' completely with a factor of 32 (systolic.cpp:92:13)
-INFO: [HLS 214-186] Unrolling loop 'systolic3' (systolic.cpp:92:13) in function 'computeAttention' completely with a factor of 32 (systolic.cpp:92:13)
-INFO: [HLS 214-186] Unrolling loop 'systolic3' (systolic.cpp:92:13) in function 'computeAttention' completely with a factor of 32 (systolic.cpp:92:13)
-INFO: [HLS 214-186] Unrolling loop 'systolic3' (systolic.cpp:92:13) in function 'computeAttention' completely with a factor of 32 (systolic.cpp:92:13)
-INFO: [HLS 214-186] Unrolling loop 'systolic3' (systolic.cpp:92:13) in function 'computeAttention' completely with a factor of 32 (systolic.cpp:92:13)
-INFO: [HLS 214-186] Unrolling loop 'systolic3' (systolic.cpp:92:13) in function 'computeAttention' completely with a factor of 32 (systolic.cpp:92:13)
-INFO: [HLS 214-186] Unrolling loop 'systolic3' (systolic.cpp:92:13) in function 'computeAttention' completely with a factor of 32 (systolic.cpp:92:13)
-INFO: [HLS 214-186] Unrolling loop 'systolic3' (systolic.cpp:92:13) in function 'computeAttention' completely with a factor of 32 (systolic.cpp:92:13)
-INFO: [HLS 214-186] Unrolling loop 'systolic3' (systolic.cpp:92:13) in function 'computeAttention' completely with a factor of 32 (systolic.cpp:92:13)
-INFO: [HLS 214-186] Unrolling loop 'systolic3' (systolic.cpp:92:13) in function 'computeAttention' completely with a factor of 32 (systolic.cpp:92:13)
-INFO: [HLS 214-186] Unrolling loop 'systolic3' (systolic.cpp:92:13) in function 'computeAttention' completely with a factor of 32 (systolic.cpp:92:13)
-INFO: [HLS 214-186] Unrolling loop 'systolic3' (systolic.cpp:92:13) in function 'computeAttention' completely with a factor of 32 (systolic.cpp:92:13)
-INFO: [HLS 214-186] Unrolling loop 'systolic3' (systolic.cpp:92:13) in function 'computeAttention' completely with a factor of 32 (systolic.cpp:92:13)
-INFO: [HLS 214-186] Unrolling loop 'systolic3' (systolic.cpp:92:13) in function 'computeAttention' completely with a factor of 32 (systolic.cpp:92:13)
-INFO: [HLS 214-186] Unrolling loop 'systolic3' (systolic.cpp:92:13) in function 'computeAttention' completely with a factor of 32 (systolic.cpp:92:13)
-INFO: [HLS 214-186] Unrolling loop 'systolic3' (systolic.cpp:92:13) in function 'computeAttention' completely with a factor of 32 (systolic.cpp:92:13)
-INFO: [HLS 200-111] Finished Compiling Optimization and Transform: CPU user time: 76.47 seconds. CPU system time: 0.55 seconds. Elapsed time: 78.99 seconds; current allocated memory: 301.355 MB.
-INFO: [HLS 200-111] Finished Checking Pragmas: CPU user time: 0.01 seconds. CPU system time: 0 seconds. Elapsed time: 0.01 seconds; current allocated memory: 301.356 MB.
-INFO: [HLS 200-10] Starting code transformations ...
-INFO: [HLS 200-111] Finished Standard Transforms: CPU user time: 3.68 seconds. CPU system time: 0.02 seconds. Elapsed time: 3.93 seconds; current allocated memory: 339.015 MB.
-INFO: [HLS 200-10] Checking synthesizability ...
-INFO: [HLS 200-111] Finished Checking Synthesizability: CPU user time: 18.31 seconds. CPU system time: 0.01 seconds. Elapsed time: 18.36 seconds; current allocated memory: 343.356 MB.
-INFO: [XFORM 203-401] Performing if-conversion on hyperblock from (systolic.cpp:52:6) to (systolic.cpp:71:32) in function 'computeLogit'... converting 3 basic blocks.
-INFO: [XFORM 203-401] Performing if-conversion on hyperblock from (systolic.cpp:52:6) to (systolic.cpp:71:32) in function 'computeLogit'... converting 4 basic blocks.
-INFO: [XFORM 203-401] Performing if-conversion on hyperblock from (systolic.cpp:52:6) to (systolic.cpp:71:32) in function 'computeLogit'... converting 4 basic blocks.
-INFO: [XFORM 203-401] Performing if-conversion on hyperblock from (systolic.cpp:52:6) to (systolic.cpp:71:32) in function 'computeLogit'... converting 4 basic blocks.
-INFO: [XFORM 203-401] Performing if-conversion on hyperblock from (systolic.cpp:52:6) to (systolic.cpp:71:32) in function 'computeLogit'... converting 4 basic blocks.
-INFO: [XFORM 203-401] Performing if-conversion on hyperblock from (systolic.cpp:52:6) to (systolic.cpp:71:32) in function 'computeLogit'... converting 4 basic blocks.
-INFO: [XFORM 203-401] Performing if-conversion on hyperblock from (systolic.cpp:52:6) to (systolic.cpp:71:32) in function 'computeLogit'... converting 4 basic blocks.
-INFO: [XFORM 203-401] Performing if-conversion on hyperblock from (systolic.cpp:52:6) to (systolic.cpp:71:32) in function 'computeLogit'... converting 4 basic blocks.
-INFO: [XFORM 203-401] Performing if-conversion on hyperblock from (systolic.cpp:52:6) to (systolic.cpp:71:32) in function 'computeLogit'... converting 4 basic blocks.
-INFO: [XFORM 203-401] Performing if-conversion on hyperblock from (systolic.cpp:52:6) to (systolic.cpp:71:32) in function 'computeLogit'... converting 4 basic blocks.
-INFO: [XFORM 203-401] Performing if-conversion on hyperblock from (systolic.cpp:52:6) to (systolic.cpp:71:32) in function 'computeLogit'... converting 4 basic blocks.
-INFO: [XFORM 203-401] Performing if-conversion on hyperblock from (systolic.cpp:52:6) to (systolic.cpp:71:32) in function 'computeLogit'... converting 4 basic blocks.
-INFO: [XFORM 203-401] Performing if-conversion on hyperblock from (systolic.cpp:52:6) to (systolic.cpp:71:32) in function 'computeLogit'... converting 4 basic blocks.
-INFO: [XFORM 203-401] Performing if-conversion on hyperblock from (systolic.cpp:52:6) to (systolic.cpp:71:32) in function 'computeLogit'... converting 4 basic blocks.
-INFO: [XFORM 203-401] Performing if-conversion on hyperblock from (systolic.cpp:52:6) to (systolic.cpp:71:32) in function 'computeLogit'... converting 4 basic blocks.
-INFO: [XFORM 203-401] Performing if-conversion on hyperblock from (systolic.cpp:52:6) to (systolic.cpp:71:32) in function 'computeLogit'... converting 4 basic blocks.
-INFO: [XFORM 203-401] Performing if-conversion on hyperblock from (systolic.cpp:52:6) to (systolic.cpp:71:32) in function 'computeLogit'... converting 4 basic blocks.
-INFO: [XFORM 203-401] Performing if-conversion on hyperblock from (systolic.cpp:52:6) to (systolic.cpp:71:32) in function 'computeLogit'... converting 4 basic blocks.
-INFO: [XFORM 203-401] Performing if-conversion on hyperblock from (systolic.cpp:52:6) to (systolic.cpp:71:32) in function 'computeLogit'... converting 4 basic blocks.
-INFO: [XFORM 203-401] Performing if-conversion on hyperblock from (systolic.cpp:52:6) to (systolic.cpp:71:32) in function 'computeLogit'... converting 4 basic blocks.
-INFO: [XFORM 203-401] Performing if-conversion on hyperblock from (systolic.cpp:52:6) to (systolic.cpp:71:32) in function 'computeLogit'... converting 4 basic blocks.
-INFO: [XFORM 203-401] Performing if-conversion on hyperblock from (systolic.cpp:52:6) to (systolic.cpp:71:32) in function 'computeLogit'... converting 4 basic blocks.
-INFO: [XFORM 203-401] Performing if-conversion on hyperblock from (systolic.cpp:52:6) to (systolic.cpp:71:32) in function 'computeLogit'... converting 4 basic blocks.
-INFO: [XFORM 203-401] Performing if-conversion on hyperblock from (systolic.cpp:52:6) to (systolic.cpp:71:32) in function 'computeLogit'... converting 4 basic blocks.
-INFO: [XFORM 203-401] Performing if-conversion on hyperblock from (systolic.cpp:52:6) to (systolic.cpp:71:32) in function 'computeLogit'... converting 4 basic blocks.
-INFO: [XFORM 203-401] Performing if-conversion on hyperblock from (systolic.cpp:52:6) to (systolic.cpp:71:32) in function 'computeLogit'... converting 4 basic blocks.
-INFO: [XFORM 203-401] Performing if-conversion on hyperblock from (systolic.cpp:52:6) to (systolic.cpp:71:32) in function 'computeLogit'... converting 4 basic blocks.
-INFO: [XFORM 203-401] Performing if-conversion on hyperblock from (systolic.cpp:52:6) to (systolic.cpp:71:32) in function 'computeLogit'... converting 4 basic blocks.
-INFO: [XFORM 203-401] Performing if-conversion on hyperblock from (systolic.cpp:52:6) to (systolic.cpp:71:32) in function 'computeLogit'... converting 4 basic blocks.
-INFO: [XFORM 203-401] Performing if-conversion on hyperblock from (systolic.cpp:52:6) to (systolic.cpp:71:32) in function 'computeLogit'... converting 4 basic blocks.
-INFO: [XFORM 203-401] Performing if-conversion on hyperblock from (systolic.cpp:52:6) to (systolic.cpp:71:32) in function 'computeLogit'... converting 6 basic blocks.
-INFO: [XFORM 203-401] Performing if-conversion on hyperblock from (systolic.cpp:52:6) in function 'computeLogit'... converting 64 basic blocks.
-INFO: [HLS 200-111] Finished Loop, function and other optimizations: CPU user time: 63.26 seconds. CPU system time: 0.03 seconds. Elapsed time: 63.48 seconds; current allocated memory: 411.758 MB.
-INFO: [HLS 200-472] Inferring partial write operation for 'logit' (systolic.cpp:72:41)
-INFO: [HLS 200-111] Finished Architecture Synthesis: CPU user time: 76.1 seconds. CPU system time: 0.17 seconds. Elapsed time: 76.29 seconds; current allocated memory: 542.976 MB.
-INFO: [HLS 200-10] Starting hardware synthesis ...
-INFO: [HLS 200-10] Synthesizing 'systolic_array' ...
-WARNING: [SYN 201-107] Renaming port name 'systolic_array/output' to 'systolic_array/output_r' to avoid the conflict with HDL keywords or other object names.
-INFO: [HLS 200-10] ----------------------------------------------------------------
-INFO: [HLS 200-42] -- Implementing module 'computeLogit' 
-INFO: [HLS 200-10] ----------------------------------------------------------------
-INFO: [SCHED 204-11] Starting scheduling ...
-INFO: [SCHED 204-11] Finished scheduling.
-INFO: [HLS 200-111] Finished Scheduling: CPU user time: 33.41 seconds. CPU system time: 0.1 seconds. Elapsed time: 33.55 seconds; current allocated memory: 595.788 MB.
-INFO: [BIND 205-100] Starting micro-architecture generation ...
-INFO: [BIND 205-101] Performing variable lifetime analysis.
-INFO: [BIND 205-101] Exploring resource sharing.
-INFO: [BIND 205-101] Binding ...
-INFO: [BIND 205-100] Finished micro-architecture generation.
-INFO: [HLS 200-111] Finished Binding: CPU user time: 43.02 seconds. CPU system time: 0.04 seconds. Elapsed time: 44.52 seconds; current allocated memory: 668.846 MB.
-INFO: [HLS 200-10] ----------------------------------------------------------------
-INFO: [HLS 200-42] -- Implementing module 'computeAttention' 
-INFO: [HLS 200-10] ----------------------------------------------------------------
-INFO: [SCHED 204-11] Starting scheduling ...
+INFO: [HLS 200-1611] Setting target device to 'xc7z020-clg400-1'
+INFO: [HLS 200-1505] Using flow_target 'vivado'
+Resolution: For help on HLS 200-1505 see www.xilinx.com/cgi-bin/docs/rdoc?v=2021.1;t=hls+guidance;d=200-1505.html
+INFO: [HLS 200-1510] Running: set_part xc7z020clg400-1 
+INFO: [HLS 200-1510] Running: create_clock -period 10 -name default 
+INFO: [HLS 200-1510] Running: csim_design -quiet 
+INFO: [SIM 211-2] *************** CSIM start ***************
+INFO: [SIM 211-4] CSIM will launch GCC as the compiler.
+   Compiling ../../../../systolic_test.cpp in debug mode
+   Compiling ../../../../systolic.cpp in debug mode
+   Generating csim.exe
+INFO: [SIM 211-1] CSim done with 0 errors.
+INFO: [SIM 211-3] *************** CSIM finish ***************
+INFO: [HLS 200-111] Finished Command csim_design CPU user time: 0.52 seconds. CPU system time: 0.23 seconds. Elapsed time: 1.81 seconds; current allocated memory: 317.003 MB.
