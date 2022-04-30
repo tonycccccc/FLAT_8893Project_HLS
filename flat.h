@@ -23,7 +23,7 @@
 #define IF_ROW 0 //Length Granularity
 #define IF_HEAD 1 //Head Granularity
 #define IF_BARCH 0 //Batch Granularity
-#define BATCH_B 64 //How many batches we want to process at a time?
+#define BATCH_B 1 //How many batches we want to process at a time?
 #define KEY_LENGTH_T 64 //How many words we want to process at a time?
 #define QUERY_LENGTH_F 64 //How many words we want to process at a time?
 #define VALUE_LENGTH_T 64 //How many words we want to process at a time?
