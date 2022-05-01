@@ -1,7 +1,7 @@
+#include "flat.h"
 #include <iostream>
 #include <limits>
 #include "hls_math.h"
-#include "flat.h"
 
 void FlatDataflow(
         data_t query[576][64][16][64],
@@ -41,104 +41,50 @@ void FlatDataflow(
         Load_Value_from_DRAM(value_buffer, value, idx);
         //STEP 2: Implement different FLAT tilings here
         // USE BASELINE Implementation for now
-        Fused_Logit_Operator(query_buffer, key_buffer, bias_buffer, Logit_out_buffer);
-        Softmax(Logit_out_buffer, Softmax_out_buffer);
-        Fused_Attention_Operator(Softmax_out_buffer, value_buffer, attention_out_buffer);
 
-        Pipelined_FLAT(query_buffer, key_buffer, bias_buffer, value_buffer, attention_out_buffer;)
+        Pipelined_FLAT(query_buffer, key_buffer, bias_buffer, value_buffer, attention_out_buffer);
 
         //Save_Partial_Output();
         Store_Output_to_DRAM(attention_out_buffer, attention_out, idx);
 
     }
 }
-///////////////////////////////////////////////////////////////////////////////////////////////
-// The dimensions of all the buffers in the following function implementation should align to what
-// is defined in the header file.
-////////////////////////////////////////////////////////////////////////////////////////////////
-void Fused_Logit_Operator(data_t query_buffer[BATCH_B][QUERY_LENGTH_F][NUM_HEAD_N][HEAD_DIM_H], data_t key_buffer[BATCH_B][KEY_LENGTH_T][NUM_HEAD_N][HEAD_DIM_H], 
-                data_t bias_buffer[BATCH_B][NUM_HEAD_N][QUERY_LENGTH_F][KEY_LENGTH_T], data_t out_buffer[BATCH_B][NUM_HEAD_N][QUERY_LENGTH_F][KEY_LENGTH_T])
-{   
-    //"BTNH, BFNH->BNFT”:
-    // Process each batch first
-    //data_t out_buffer[BATCH_B][NUM_HEAD_N][QUERY_LENGTH_F][KEY_LENGTH_T]; //BNFT
+
+void Pipelined_FLAT(data_t query_buffer[BATCH_B][QUERY_LENGTH_F][NUM_HEAD_N][HEAD_DIM_H], data_t key_buffer[BATCH_B][KEY_LENGTH_T][NUM_HEAD_N][HEAD_DIM_H], data_t bias_buffer[BATCH_B][NUM_HEAD_N][QUERY_LENGTH_F][KEY_LENGTH_T],
+                     data_t value_buffer[BATCH_B][KEY_LENGTH_T][NUM_HEAD_N][HEAD_DIM_H], data_t attention_out_buffer[BATCH_B][QUERY_LENGTH_F][NUM_HEAD_N][HEAD_DIM_H])
+{
     for (int b = 0; b < BATCH_B; ++b)
     {
-        for (int t = 0; t < KEY_LENGTH_T; ++t)
+        for (int n = 0; n < NUM_HEAD_N; ++n)
         {
-            for (int f = 0; f < QUERY_LENGTH_F; ++f)
+            data_t query_row_gran[QUERY_LENGTH_F][HEAD_DIM_H] = {0};
+            data_t key_row_gran[KEY_LENGTH_T][HEAD_DIM_H] = {0};
+            data_t value_row_gran[KEY_LENGTH_T][HEAD_DIM_H] = {0};
+            data_t bias_row_gran[QUERY_LENGTH_F][KEY_LENGTH_T] = {0};
+            data_t attention_out_row_gran[QUERY_LENGTH_F][HEAD_DIM_H] = {0};
+            Load_Query_ROW_Gran(b, n, query_buffer, query_row_gran);
+            Load_Key_ROW_Gran(b, n, key_buffer, key_row_gran);
+            Load_Value_ROW_Gran(b, n, value_buffer, value_row_gran);
+            Load_Bias_ROW_Gran(b, n, bias_buffer, bias_row_gran);
+
+            data_t logit_ping[QUERY_LENGTH_F][KEY_LENGTH_T], logit_pong[QUERY_LENGTH_F][KEY_LENGTH_T];
+            data_t softmax_ping[QUERY_LENGTH_F][KEY_LENGTH_T], softmax_pong[QUERY_LENGTH_F][KEY_LENGTH_T];
+
+            if (n % 2 == 0)
             {
-                for (int n = 0; n < NUM_HEAD_N; ++n)
-                {
-                    for (int h = 0; h < HEAD_DIM_H; ++h)
-                    {
-						
-                        out_buffer[b][n][f][t] += query_buffer[b][f][n][h] * key_buffer[b][t][n][h];
-                    }
-                    out_buffer[b][n][f][t] += bias_buffer[b][n][f][t];
-                }
+                computeLogit(query_row_gran, key_row_gran, bias_row_gran, logit_ping);
+                Inter_Softmax(logit_ping, softmax_pong);
+                computeAttention(softmax_pong, value_row_gran, attention_out_row_gran);
             }
+            else
+            {
+                computeLogit(query_row_gran, key_row_gran, bias_row_gran, logit_pong);
+                Inter_Softmax(logit_pong, softmax_ping);
+                computeAttention(softmax_ping, value_row_gran, attention_out_row_gran);
+            }
+
+            Write_Attention_Back(b, n, attention_out_buffer, attention_out_row_gran);
         }
     }
 }
 
-void Softmax(data_t logit_out[BATCH_B][NUM_HEAD_N][QUERY_LENGTH_F][KEY_LENGTH_T], data_t softmanx_out[BATCH_B][NUM_HEAD_N][QUERY_LENGTH_F][KEY_LENGTH_T])
-{
-    //BNFT -> BNFT
-    for (int b = 0; b < BATCH_B; ++b) //64
-    {
-        for (int n = 0; n < NUM_HEAD_N; ++n) //16
-        {
-            for (int f = 0; f < QUERY_LENGTH_F; ++f) //64
-            {
-                //data_t max = std::numeric_limits<float>::min();
-                data_t max = -1;
-                for (int t = 0; t < KEY_LENGTH_T; ++t) //64
-                {
-					//std::cout << max << std::endl;
-                    if (logit_out[b][n][f][t] > max)
-                    {
-                        max = logit_out[b][n][f][t];
-						
-                    }
-                }
-                data_t buffer[KEY_LENGTH_T];
-                data_t sum = 0;
-                for (int t = 0; t < KEY_LENGTH_T; ++t)
-                {
-                    data_t tmp = logit_out[b][n][f][t]- max;
-                    buffer[t] = exp(tmp);
-                    sum = sum + buffer[t];
-					// std::cout << buffer[t] << std::endl;
-					// std::cout << sum << std::endl;
-                }
-                for (int t = 0; t < KEY_LENGTH_T; ++t)
-                {
-                    softmanx_out[b][n][f][t] = buffer[t] / sum;
-                }
-            }
-        }
-    }
-}
-
-void Fused_Attention_Operator(data_t softmax_out[BATCH_B][NUM_HEAD_N][QUERY_LENGTH_F][KEY_LENGTH_T], data_t value_buffer[BATCH_B][KEY_LENGTH_T][NUM_HEAD_N][HEAD_DIM_H],
-                    data_t attention_out_buffer[BATCH_B][QUERY_LENGTH_F][NUM_HEAD_N][HEAD_DIM_H])
-{
-    //BNFT,BTNH->BFNH
-    for (int b = 0; b < BATCH_B; ++b)
-    {
-        for (int f = 0; f < QUERY_LENGTH_F; ++f)
-        {
-            for (int h = 0; h < HEAD_DIM_H; ++h)
-            {
-                for (int n = 0; n < NUM_HEAD_N; ++n)
-                {
-                    for (int t = 0; t < KEY_LENGTH_T; ++t)
-                    {
-                        attention_out_buffer[b][f][n][h] += softmax_out[b][n][f][t] * value_buffer[b][t][n][h];
-                    }
-                }
-            }
-        }
-    }
-}
