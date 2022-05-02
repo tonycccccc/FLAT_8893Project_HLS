@@ -5,11 +5,11 @@
 #include <stdint.h>
 #include <iostream>
 
-#define ROW 32
-#define COLUMN 32
+#define ROW 64
+#define COLUMN 64
 
 // Dimension of the inner "pseudo" SA for each actual PE
-#define SYSTOLIC_DIM 8
+#define SYSTOLIC_DIM 16
 
 typedef uint32_t data_t;
 

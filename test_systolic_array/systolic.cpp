@@ -19,6 +19,7 @@ void systolic_array(data_t query_matrix[ROW][COLUMN], data_t key_matrix[ROW][COL
 void computeLogit(data_t query_matrix[ROW][COLUMN], data_t key_matrix[ROW][COLUMN],
 					data_t bias_matrix[ROW][COLUMN], data_t logit[ROW][COLUMN])
 {
+#pragma HLS INLINE
 
 #pragma HLS ARRAY_PARTITION variable=key_matrix dim=1 type=complete
 #pragma HLS ARRAY_PARTITION variable=query_matrix dim=1 type=complete
@@ -26,9 +27,10 @@ void computeLogit(data_t query_matrix[ROW][COLUMN], data_t key_matrix[ROW][COLUM
 //#pragma HLS ARRAY_PARTITION variable=logit dim=1 type=complete
 
 	   data_t local_out[ROW][COLUMN];
+	   //data_t local_max[COLUMN];
 
 //#pragma HLS ARRAY_PARTITION variable=local_out dim=2 type=complete
-
+//#pragma HLS ARRAY_PARTITION variable=local_max dim=1 type=complete
 
     int maxf = ROW+COLUMN-2;
     // Systolic array is TxH, iterations are F
@@ -50,19 +52,20 @@ void computeLogit(data_t query_matrix[ROW][COLUMN], data_t key_matrix[ROW][COLUM
 #pragma HLS PIPELINE II=1
     				systolic_h_inner:
     				for (int h = h0*SYSTOLIC_DIM-1; h > (h0-1)*SYSTOLIC_DIM-1; --h) {
-						bool active = (f-t-h >= 0 && f-t-h < ROW);
-						data_t query = (active) ? query_matrix[f-t-h][h] : (data_t) 0;
-						data_t prev_sum = (active) ? ((h == 0) ? bias_matrix[f-t][t] : local_out[t][h-1]) : (data_t) 0;
+					bool active = (f-t-h >= 0 && f-t-h < ROW);
+					data_t query = (active) ? query_matrix[f-t-h][h] : (data_t) 0;
+					data_t prev_sum = (active) ? ((h == 0) ? bias_matrix[f-t][t] : local_out[t][h-1]) : (data_t) 0;
 
 #pragma HLS BIND_OP variable=local_out op=mul impl=dsp latency=-1
-						 local_out[t][h] = query * key_matrix[t][h] + prev_sum;
+					local_out[t][h] = query * key_matrix[t][h] + prev_sum;
 
-						int trow = t+ROW-1;
-						int findex = f-trow;
-						if (h == COLUMN-1 && f >= trow && findex <= COLUMN-1) {
-							// Write back
-							logit[findex][t] = local_out[t][COLUMN-1];
-						}
+					int trow = t+ROW-1;
+					int findex = f-trow;
+					if (h == COLUMN-1 && f >= trow && findex <= COLUMN-1) {
+						// Write back
+						logit[findex][t] = local_out[t][COLUMN-1];
+						// Update max
+					}
     				}
     			}
             }
@@ -74,9 +77,14 @@ void computeLogit(data_t query_matrix[ROW][COLUMN], data_t key_matrix[ROW][COLUM
 // TODO: Value weight stationary
 void computeAttention(data_t logit[ROW][COLUMN], data_t value_matrix[ROW][COLUMN], data_t output[ROW][COLUMN])
 {
+#pragma HLS INLINE
 
 #pragma HLS ARRAY_PARTITION variable=value_matrix dim=1 type=complete
 #pragma HLS ARRAY_PARTITION variable=output dim=0 type=complete
+
+data_t local_out[ROW][COLUMN];
+
+//#pragma HLS ARRAY_PARTITION variable=local_out dim=0 type=complete
 
 int maxk = ROW+COLUMN-2;
 systolic1:
@@ -94,19 +102,26 @@ systolic1:
 
 				systolic2_inner:
 				for (int i = i0*SYSTOLIC_DIM-1; i > (i0-1)*SYSTOLIC_DIM-1; --i) {
-#pragma HLS PIPELINE OFF
+#pragma HLS PIPELINE II=1
 					systolic3_inner:
 					for (int j = j0*SYSTOLIC_DIM-1; j > (j0-1)*SYSTOLIC_DIM-1; --j) {
-#pragma HLS PIPELINE II=1
+
 
 						bool active = (k-i-j >= 0 && k-i-j < ROW);
 						data_t a_val = (active) ? logit[i][k-i-j] : (data_t) 0;
 						data_t b_val = (active) ? value_matrix[k-i-j][j] : (data_t) 0;
-						//data_t prev_sum = (active) ? ((h == 0) ? bias_matrix[f-t][t] : local_out[t][h-1]) : (data_t) 0;
-						data_t last = (k == 0) ? (data_t) 0 : output[i][j];
-#pragma HLS BIND_OP variable=output op=mul impl=dsp latency=-1
-						output[i][j] = last + a_val * b_val;
+						data_t last = (active) ? ((j == 0) ? (data_t) 0 : local_out[i][j-1]) : (data_t) 0;
 
+
+#pragma HLS BIND_OP variable=local_out op=mul impl=dsp latency=-1
+						local_out[i][j] = last + a_val * b_val;
+
+						int irow = i+ROW-1;
+						int kindex = k-irow;
+						if (j == COLUMN-1 && k >= irow && kindex <= COLUMN-1) {
+							// Write back
+							output[kindex][i] = local_out[i][COLUMN-1];
+						}
 					}
 				}
             }
