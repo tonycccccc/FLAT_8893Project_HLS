@@ -68,22 +68,45 @@ void Pipelined_FLAT(data_t query_buffer[BATCH_B][QUERY_LENGTH_F][NUM_HEAD_N][HEA
             Load_Bias_ROW_Gran(b, n, bias_buffer, bias_row_gran);
 
             data_t logit_ping[QUERY_LENGTH_F][KEY_LENGTH_T], logit_pong[QUERY_LENGTH_F][KEY_LENGTH_T];
+            data_t max_ping[QUERY_LENGTH_F], max_pong[QUERY_LENGTH_F];
             data_t softmax_ping[QUERY_LENGTH_F][KEY_LENGTH_T], softmax_pong[QUERY_LENGTH_F][KEY_LENGTH_T];
 
-            if (n % 2 == 0)
+            if (n == 0)
             {
-                computeLogit(query_row_gran, key_row_gran, bias_row_gran, logit_ping);
-                Inter_Softmax(logit_ping, softmax_pong);
-                computeAttention(softmax_pong, value_row_gran, attention_out_row_gran);
+                computeLogit(query_row_gran, key_row_gran, bias_row_gran, logit_ping, max_ping);
+                //Inter_Softmax(logit_ping, softmax_pong);
+                //computeAttention(softmax_pong, value_row_gran, attention_out_row_gran);
+            }
+            else if (n == 1)
+            {
+                computeLogit(query_row_gran, key_row_gran, bias_row_gran, logit_pong, max_pong);
+                Inter_Softmax(logit_ping, softmax_pong, max_ping);
+            }
+            else if (n != NUM_HEAD_N - 1)
+            {
+                if (n%2 == 0)
+                {
+                    computeLogit(query_row_gran, key_row_gran, bias_row_gran, logit_ping, max_ping);
+                    Inter_Softmax(logit_pong, softmax_ping, max_pong);
+                    computeAttention(softmax_pong, value_row_gran, attention_out_row_gran);
+                    Write_Attention_Back(b, n-2, attention_out_buffer, attention_out_row_gran);
+                }
+                else if (n%2==1)
+                {
+                    computeLogit(query_row_gran, key_row_gran, bias_row_gran, logit_pong, max_pong);
+                    Inter_Softmax(logit_ping, softmax_pong, max_ping);
+                    computeAttention(softmax_ping, value_row_gran, attention_out_row_gran);
+                    Write_Attention_Back(b, n-2, attention_out_buffer, attention_out_row_gran); 
+                }
             }
             else
             {
-                computeLogit(query_row_gran, key_row_gran, bias_row_gran, logit_pong);
-                Inter_Softmax(logit_pong, softmax_ping);
-                computeAttention(softmax_ping, value_row_gran, attention_out_row_gran);
+                Inter_Softmax(logit_ping, softmax_pong, max_ping);
+                computeAttention(softmax_ping, value_row_gran, attention_out_row_gran); 
+                Write_Attention_Back(b, n-1, attention_out_buffer, attention_out_row_gran);
+                computeAttention(softmax_pong, value_row_gran, attention_out_row_gran);
+                Write_Attention_Back(b, n, attention_out_buffer, attention_out_row_gran);
             }
-
-            Write_Attention_Back(b, n, attention_out_buffer, attention_out_row_gran);
         }
     }
 }

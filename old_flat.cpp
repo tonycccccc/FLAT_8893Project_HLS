@@ -74,6 +74,12 @@ void Fused_Logit_Operator(data_t query_buffer[BATCH_B][QUERY_LENGTH_F][NUM_HEAD_
                         out_buffer[b][n][f][t] += query_buffer[b][f][n][h] * key_buffer[b][t][n][h];
                     }
                     out_buffer[b][n][f][t] += bias_buffer[b][n][f][t];
+                    // if (out_buffer[b][n][f][t] >=3 )
+                    // {
+                    //     std::cout << out_buffer[b][n][f][t] << std::endl;
+                    //     std::cout << "YES1" <<std::endl;
+                    // }
+                    //std::cout << out_buffer[b][n][f][t] << std::endl;
                 }
             }
         }
@@ -97,22 +103,33 @@ void Softmax(data_t logit_out[BATCH_B][NUM_HEAD_N][QUERY_LENGTH_F][KEY_LENGTH_T]
                     if (logit_out[b][n][f][t] > max)
                     {
                         max = logit_out[b][n][f][t];
-						
                     }
                 }
+                //std::cout << "HERE" << std::endl;
                 data_t buffer[KEY_LENGTH_T];
                 data_t sum = 0;
                 for (int t = 0; t < KEY_LENGTH_T; ++t)
                 {
                     data_t tmp = logit_out[b][n][f][t]- max;
+                    //std::cout << tmp << std::endl;
                     buffer[t] = exp(tmp);
                     sum = sum + buffer[t];
-					// std::cout << buffer[t] << std::endl;
-					// std::cout << sum << std::endl;
+					//std::cout << buffer[t] << std::endl;
+					//std::cout << sum << std::endl;
                 }
                 for (int t = 0; t < KEY_LENGTH_T; ++t)
                 {
+                    //std::cout << "SOFTMAX COMPUTE" << std::endl;
+                    if (sum == 0)
+                    {
+                        sum = 1;
+                    }
+                    // else if (sum >=3 || sum < -4)
+                    // {
+                    //     std::cout << "YES2" << std::endl;
+                    // }
                     softmanx_out[b][n][f][t] = buffer[t] / sum;
+                    //std::cout << softmanx_out[b][n][f][t] << std::endl;
                 }
             }
         }
@@ -135,6 +152,11 @@ void Fused_Attention_Operator(data_t softmax_out[BATCH_B][NUM_HEAD_N][QUERY_LENG
                     {
                         attention_out_buffer[b][f][n][h] += softmax_out[b][n][f][t] * value_buffer[b][t][n][h];
                     }
+                    //std::cout << attention_out_buffer[b][f][n][h] << std::endl;
+                    // if (attention_out_buffer[b][f][n][h] >=3 || attention_out_buffer[b][f][n][h] < -4 )
+                    // {
+                    //     std::cout << "YES3" << std::endl;
+                    // }
                 }
             }
         }

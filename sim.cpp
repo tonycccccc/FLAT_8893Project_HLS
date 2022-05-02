@@ -4,6 +4,7 @@
 #include <iostream>
 #include <fstream>
 #include <cmath>
+#include <limits>
 
 #include "flat.h"
 
@@ -34,27 +35,27 @@ data_t fixp_attention_out[576][64][16][64]={0};
 void read_bin_files()
 {
     //Query Feature Map
-    ifstream ifs_query("./bin/query.bin", ios::in|ios::binary);
+    ifstream ifs_query("./bin/eight_query.bin", ios::in|ios::binary);
     ifs_query.read((char*)(***attention_layer_query_input), 576*64*16*64*sizeof(float));
     ifs_query.close();
 
     //Key Feature Map
-    ifstream ifs_key("./bin/key.bin", ios::in|ios::binary);
+    ifstream ifs_key("./bin/eight_key.bin", ios::in|ios::binary);
     ifs_key.read((char*)(***attention_layer_key_input), 576*64*16*64*sizeof(float));
     ifs_key.close();
 
     //Value Feature Map
-    ifstream ifs_value("./bin/value.bin", ios::in|ios::binary);
+    ifstream ifs_value("./bin/eight_value.bin", ios::in|ios::binary);
     ifs_value.read((char*)(***attention_layer_value_input), 576*64*16*64*sizeof(float));
     ifs_value.close();
 
     //Bias Feature Map
-    ifstream ifs_bias("./bin/bias.bin", ios::in|ios::binary);
+    ifstream ifs_bias("./bin/eight_bias.bin", ios::in|ios::binary);
     ifs_bias.read((char*)(***attention_layer_bias_input), 64*16*64*64*sizeof(float));
     ifs_bias.close();
 
     //Golden Output
-    ifstream ifs_target_output("./bin/golden_output_one.bin", ios::in|ios::binary);
+    ifstream ifs_target_output("./bin/eight_golden_output_final.bin", ios::in|ios::binary);
     ifs_target_output.read((char*)(***attention_out), 576*64*16*64*sizeof(float));
     ifs_target_output.close();
 }
@@ -74,6 +75,7 @@ void convert_type()
             {
                 for (int h = 0; h < 64; ++h)
                 {
+                    //std::cout << attention_layer_key_input[b][t][n][h] << std::endl;
                     fixp_attention_layer_value_input[b][t][n][h] = (data_t)attention_layer_value_input[b][t][n][h];
                     fixp_attention_layer_key_input[b][t][n][h] = (data_t)attention_layer_key_input[b][t][n][h];
                 }
@@ -92,6 +94,7 @@ void convert_type()
                 {
                     fixp_attention_layer_query_input[b][f][n][h] = (data_t)attention_layer_query_input[b][f][n][h];
                     //fixp_attention_out[b][f][n][h] = (data_t)attention_out[b][f][n][h];
+                    //std::cout << fixp_attention_out[b][f][n][h] << std::endl;
                 }
             }
         }
@@ -150,14 +153,17 @@ int main()
             {
                 for (int h = 0; h < 64; ++h)
                 {
-                    mse += std::pow((attention_out[b][f][n][h]
+                    #ifdef CMODEL_SIM
+                        mse += std::pow((attention_out[b][f][n][h]
                               - (float) fixp_attention_out[b][f][n][h]), 2);
+                    #else 
+                        mse = 0;
+                    #endif
                 }
             }
         }
     }
     
-
     mse = mse / (576 * 64 * 64 * 16);
 
     std::cout << "Output MSE:  " << mse << std::endl;

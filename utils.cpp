@@ -82,6 +82,7 @@ void Load_Bias_from_DRAM(data_t bias_buffer[BATCH_B][NUM_HEAD_N][QUERY_LENGTH_F]
             }
         }
     }
+    // <<"FINISH"<<std::endl;
 }
 
 
