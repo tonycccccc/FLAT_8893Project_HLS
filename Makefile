@@ -22,6 +22,8 @@ flat.o:./flat.cpp
 	$(CC) $(GCOV)  $(CFLAG)  -o $@ -c $^    -MMD $(IFLAG)
 utils.o:./utils.cpp
 	$(CC) $(GCOV)  $(CFLAG)  -o $@ -c $^    -MMD $(IFLAG)
+systolic_array.o:./systolic_array.cpp
+	$(CC) $(GCOV)  $(CFLAG)  -o $@ -c $^    -MMD $(IFLAG)
 # model_conv.o:./model_conv.cpp
 # 	$(CC) $(GCOV)  $(CFLAG)  -o $@ -c $^    -MMD $(IFLAG)
 # tiled_conv.o:./tiled_conv.cpp
@@ -31,6 +33,7 @@ utils.o:./utils.cpp
 
 IP_DEP+=flat.o
 IP_DEP+=utils.o
+IP_DEP+=systolic_array.o
 # IP_DEP+=model_conv.o
 # IP_DEP+=tiled_conv.o
 

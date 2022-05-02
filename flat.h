@@ -52,10 +52,22 @@ void Load_Key_from_DRAM(data_t key_buffer[BATCH_B][KEY_LENGTH_T][NUM_HEAD_N][HEA
 void Load_Value_from_DRAM(data_t value_buffer[BATCH_B][KEY_LENGTH_T][NUM_HEAD_N][HEAD_DIM_H], data_t value[576][64][16][64], int idx);
 void Load_Bias_from_DRAM(data_t bias_buffer[BATCH_B][NUM_HEAD_N][QUERY_LENGTH_F][KEY_LENGTH_T], data_t bias[64][16][64][64]);
 
+void Load_Query_ROW_Gran(int b, int n, data_t query_buffer[BATCH_B][QUERY_LENGTH_F][NUM_HEAD_N][HEAD_DIM_H], data_t query_row_gran[QUERY_LENGTH_F][HEAD_DIM_H]);
+void Load_Key_ROW_Gran(int b, int n, data_t key_buffer[BATCH_B][KEY_LENGTH_T][NUM_HEAD_N][HEAD_DIM_H], data_t key_row_gran[KEY_LENGTH_T][HEAD_DIM_H]);
+void Load_Value_ROW_Gran(int b, int n, data_t value_buffer[BATCH_B][KEY_LENGTH_T][NUM_HEAD_N][HEAD_DIM_H], data_t value_row_gran[KEY_LENGTH_T][HEAD_DIM_H]);
+void Load_Bias_ROW_Gran(int b, int n, data_t bias_buffer[BATCH_B][NUM_HEAD_N][QUERY_LENGTH_F][KEY_LENGTH_T], data_t bias_row_gran[QUERY_LENGTH_F][KEY_LENGTH_T]);
+
+void Write_Attention_Back(int b, int n, data_t attention_out_buffer[BATCH_B][QUERY_LENGTH_F][NUM_HEAD_N][HEAD_DIM_H], data_t attention_out_row_gran[QUERY_LENGTH_F][HEAD_DIM_H]);
+
 void Fused_Logit_Operator(data_t query_buffer[BATCH_B][QUERY_LENGTH_F][NUM_HEAD_N][HEAD_DIM_H], data_t key_buffer[BATCH_B][KEY_LENGTH_T][NUM_HEAD_N][HEAD_DIM_H], data_t bias_buffer[BATCH_B][NUM_HEAD_N][QUERY_LENGTH_F][KEY_LENGTH_T], data_t out_buffer[BATCH_B][NUM_HEAD_N][QUERY_LENGTH_F][KEY_LENGTH_T]);
 void Softmax(data_t logit_out[BATCH_B][NUM_HEAD_N][QUERY_LENGTH_F][KEY_LENGTH_T], data_t softmanx_out[BATCH_B][NUM_HEAD_N][QUERY_LENGTH_F][KEY_LENGTH_T]);
 void Fused_Attention_Operator(data_t softmax_out[BATCH_B][NUM_HEAD_N][QUERY_LENGTH_F][KEY_LENGTH_T], data_t value_buffer[BATCH_B][KEY_LENGTH_T][NUM_HEAD_N][HEAD_DIM_H],
                     data_t attention_out_buffer[BATCH_B][QUERY_LENGTH_F][NUM_HEAD_N][HEAD_DIM_H]);
+
+void computeLogit(data_t query_matrix[QUERY_LENGTH_F][HEAD_DIM_H], data_t key_matrix[KEY_LENGTH_T][HEAD_DIM_H],
+					data_t bias_matrix[QUERY_LENGTH_F][KEY_LENGTH_T], data_t logit[QUERY_LENGTH_F][KEY_LENGTH_T]);
+void computeAttention(data_t softmax[QUERY_LENGTH_F][KEY_LENGTH_T], data_t value_matrix[QUERY_LENGTH_F][KEY_LENGTH_T], data_t output[QUERY_LENGTH_F][KEY_LENGTH_T]);
+void Inter_Softmax(data_t logit[QUERY_LENGTH_F][KEY_LENGTH_T], data_t softmax[QUERY_LENGTH_F][KEY_LENGTH_T]);
 
 void Pipelined_FLAT(data_t query_buffer[BATCH_B][QUERY_LENGTH_F][NUM_HEAD_N][HEAD_DIM_H], data_t key_buffer[BATCH_B][KEY_LENGTH_T][NUM_HEAD_N][HEAD_DIM_H], data_t bias_buffer[BATCH_B][NUM_HEAD_N][QUERY_LENGTH_F][KEY_LENGTH_T],
                      data_t value_buffer[BATCH_B][KEY_LENGTH_T][NUM_HEAD_N][HEAD_DIM_H], data_t attention_out_buffer[BATCH_B][QUERY_LENGTH_F][NUM_HEAD_N][HEAD_DIM_H]);
@@ -68,9 +80,5 @@ void Store_Output_to_DRAM(data_t attention_out_buffer[64][64][16][64], data_t at
 
 
 void FlatDataflow(data_t query[576][64][16][64], data_t key[576][64][16][64], data_t value[576][64][16][64], data_t bias[64][16][64][64], data_t attention_out[576][64][16][64]);
-
-
-
-
 
 #endif // MACRO
