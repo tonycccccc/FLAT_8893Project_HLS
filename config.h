@@ -1,2 +1,2 @@
-#define CSIM_DEBUG
-//#define CMODEL_SIM
+//#define CSIM_DEBUG
+#define CMODEL_SIM

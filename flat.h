@@ -17,7 +17,7 @@
 #ifdef  CSIM_DEBUG
     typedef float data_t;
 #else
-    typedef ap_fixed<24,6> data_t;
+    typedef ap_fixed<16,3> data_t;
 #endif 
     
 #define IF_ROW 0 //Length Granularity
@@ -65,9 +65,9 @@ void Fused_Attention_Operator(data_t softmax_out[BATCH_B][NUM_HEAD_N][QUERY_LENG
                     data_t attention_out_buffer[BATCH_B][QUERY_LENGTH_F][NUM_HEAD_N][HEAD_DIM_H]);
 
 void computeLogit(data_t query_matrix[QUERY_LENGTH_F][HEAD_DIM_H], data_t key_matrix[KEY_LENGTH_T][HEAD_DIM_H],
-					data_t bias_matrix[QUERY_LENGTH_F][KEY_LENGTH_T], data_t logit[QUERY_LENGTH_F][KEY_LENGTH_T]);
+					data_t bias_matrix[QUERY_LENGTH_F][KEY_LENGTH_T], data_t logit[QUERY_LENGTH_F][KEY_LENGTH_T], data_t max[QUERY_LENGTH_F]);
 void computeAttention(data_t softmax[QUERY_LENGTH_F][KEY_LENGTH_T], data_t value_matrix[QUERY_LENGTH_F][KEY_LENGTH_T], data_t output[QUERY_LENGTH_F][KEY_LENGTH_T]);
-void Inter_Softmax(data_t logit[QUERY_LENGTH_F][KEY_LENGTH_T], data_t softmax[QUERY_LENGTH_F][KEY_LENGTH_T]);
+void Inter_Softmax(data_t logit[QUERY_LENGTH_F][KEY_LENGTH_T], data_t softmax[QUERY_LENGTH_F][KEY_LENGTH_T], data_t max[QUERY_LENGTH_F]);
 
 void Pipelined_FLAT(data_t query_buffer[BATCH_B][QUERY_LENGTH_F][NUM_HEAD_N][HEAD_DIM_H], data_t key_buffer[BATCH_B][KEY_LENGTH_T][NUM_HEAD_N][HEAD_DIM_H], data_t bias_buffer[BATCH_B][NUM_HEAD_N][QUERY_LENGTH_F][KEY_LENGTH_T],
                      data_t value_buffer[BATCH_B][KEY_LENGTH_T][NUM_HEAD_N][HEAD_DIM_H], data_t attention_out_buffer[BATCH_B][QUERY_LENGTH_F][NUM_HEAD_N][HEAD_DIM_H]);
