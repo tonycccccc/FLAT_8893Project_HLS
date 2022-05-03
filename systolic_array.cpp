@@ -10,7 +10,7 @@ void Inter_Softmax(data_t logit[QUERY_LENGTH_F][KEY_LENGTH_T], data_t softmax[QU
 		data_t max = max_arr[f];
 		data_t sum = 0;
 		for (int t = 0; t < KEY_LENGTH_T; ++t) {
-			buffer[t] = exp(logit[f][t] - test);
+			buffer[t] = exp(logit[f][t] - max);
 			sum += buffer[t];
 		}
 		for (int t = 0; t < KEY_LENGTH_T; ++t) {
@@ -50,17 +50,17 @@ void computeLogit(data_t query_matrix[QUERY_LENGTH_F][KEY_LENGTH_T], data_t key_
 
     	systolic_t_outer:
     	for (int t0 = QUERY_LENGTH_F/SYSTOLIC_DIM; t0 > 0; --t0) {
+#pragma HLS UNROLL factor=16
     		systolic_h_outer:
     		for (int h0 = KEY_LENGTH_T/SYSTOLIC_DIM; h0 > 0; --h0) {
-#pragma HLS PIPELINE II=1
-#pragma HLS LOOP_FLATTEN
+#pragma HLS UNROLL factor=16
 
     			systolic_t_inner:
     			for (int t = t0*SYSTOLIC_DIM-1; t > (t0-1)*SYSTOLIC_DIM-1; --t) {
-#pragma HLS UNROLL factor=16
     				systolic_h_inner:
     				for (int h = h0*SYSTOLIC_DIM-1; h > (h0-1)*SYSTOLIC_DIM-1; --h) {
-#pragma HLS UNROLL factor=16
+#pragma HLS PIPELINE II=1
+#pragma HLS LOOP_FLATTEN
 
 					data_t query = query_matrix[(f-t-h) % QUERY_LENGTH_F][h];
 					data_t prev_sum = (h == 0) ? bias_matrix[(f-t) % QUERY_LENGTH_F][t] : local_out[t][(h-1) % KEY_LENGTH_T];
@@ -106,17 +106,17 @@ systolic1:
 
 	systolic2_outer:
 		for (int i0 = QUERY_LENGTH_F/SYSTOLIC_DIM; i0 > 0; --i0) {
+#pragma HLS UNROLL factor=16
 		systolic3_outer:
 			for (int j0 = KEY_LENGTH_T/SYSTOLIC_DIM; j0 > 0; --j0) {
-#pragma HLS PIPELINE II=1
-#pragma HLS LOOP_FLATTEN
+#pragma HLS UNROLL factor=16
 
 				systolic2_inner:
 				for (int i = i0*SYSTOLIC_DIM-1; i > (i0-1)*SYSTOLIC_DIM-1; --i) {
-#pragma HLS UNROLL factor=16
 					systolic3_inner:
 					for (int j = j0*SYSTOLIC_DIM-1; j > (j0-1)*SYSTOLIC_DIM-1; --j) {
-#pragma HLS UNROLL factor=16
+#pragma HLS PIPELINE II=1
+#pragma HLS LOOP_FLATTEN
 
 						data_t a_val = logit[i][(k-i-j) % KEY_LENGTH_T];
 						data_t b_val = value_matrix[(k-i-j) % QUERY_LENGTH_F][j];
