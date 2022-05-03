@@ -11,14 +11,11 @@ void Inter_Softmax(data_t logit[QUERY_LENGTH_F][KEY_LENGTH_T], data_t softmax[QU
 		data_t sum = 0;
 		// max = test;
 		for (int t = 0; t < KEY_LENGTH_T; ++t) {
-			buffer[t] = exp(logit[f][t] - test);
+			buffer[t] = exp(logit[f][t] - max);
 			sum += buffer[t];
 		}
+		if (sum == 0) sum = 1;
 		for (int t = 0; t < KEY_LENGTH_T; ++t) {
-			if (sum == 0)
-			{
-				sum = 1;
-			}
 			//std::cout << sum << std::endl;
 			softmax[f][t] = buffer[t] / sum;
 		}
@@ -31,7 +28,7 @@ void computeLogit(data_t query_matrix[QUERY_LENGTH_F][KEY_LENGTH_T], data_t key_
 					data_t bias_matrix[QUERY_LENGTH_F][KEY_LENGTH_T], data_t logit[QUERY_LENGTH_F][KEY_LENGTH_T], data_t max[QUERY_LENGTH_F])
 {
 
-#pragma HLS ARRAY_PARTITION variable=key_matrix dim=0 type=complete
+//#pragma HLS ARRAY_PARTITION variable=key_matrix dim=0 type=complete
 #pragma HLS ARRAY_PARTITION variable=query_matrix dim=0 type=cyclic factor=4
 #pragma HLS ARRAY_PARTITION variable=bias_matrix dim=0 type=cyclic factor=4
 #pragma HLS ARRAY_PARTITION variable=logit dim=0 type=complete
@@ -91,7 +88,7 @@ void computeLogit(data_t query_matrix[QUERY_LENGTH_F][KEY_LENGTH_T], data_t key_
 void computeAttention(data_t logit[QUERY_LENGTH_F][KEY_LENGTH_T], data_t value_matrix[QUERY_LENGTH_F][KEY_LENGTH_T], data_t output[QUERY_LENGTH_F][KEY_LENGTH_T])
 {
 #pragma HLS ARRAY_PARTITION variable=logit dim=0 type=complete
-#pragma HLS ARRAY_PARTITION variable=value_matrix dim=0 type=complete
+//#pragma HLS ARRAY_PARTITION variable=value_matrix dim=0 type=complete
 #pragma HLS ARRAY_PARTITION variable=output dim=0 type=complete
 
 data_t local_out[QUERY_LENGTH_F][KEY_LENGTH_T];
