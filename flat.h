@@ -19,6 +19,8 @@
 #else
     typedef ap_fixed<16,3> data_t;
 #endif 
+
+typedef ap_uint<1024> MEM_TYPE;
     
 #define IF_ROW 0 //Length Granularity
 #define IF_HEAD 1 //Head Granularity
@@ -47,17 +49,18 @@ void GenerateBias(std::vector<data_t>& input_matrix);
  * Apply Double Buffering if needed (ONE Block for data loading and the Other for Computation)
  * Not Provided index for loading for now. Assume only one block in DRAM to load
  */
-void Load_Query_from_DRAM(data_t query_buffer[BATCH_B][QUERY_LENGTH_F][NUM_HEAD_N][HEAD_DIM_H], data_t query[576][64][16][64], int idx);
-void Load_Key_from_DRAM(data_t key_buffer[BATCH_B][KEY_LENGTH_T][NUM_HEAD_N][HEAD_DIM_H], data_t key[576][64][16][64], int idx);
-void Load_Value_from_DRAM(data_t value_buffer[BATCH_B][KEY_LENGTH_T][NUM_HEAD_N][HEAD_DIM_H], data_t value[576][64][16][64], int idx);
-void Load_Bias_from_DRAM(data_t bias_buffer[BATCH_B][NUM_HEAD_N][QUERY_LENGTH_F][KEY_LENGTH_T], data_t bias[64][16][64][64]);
+void Load_Query_from_DRAM(int b, int n, data_t query_buffer[QUERY_LENGTH_F][HEAD_DIM_H], MEM_TYPE query[576][64][16]);
+void Load_Key_from_DRAM(int b, int n, data_t key_buffer[KEY_LENGTH_T][HEAD_DIM_H], MEM_TYPE key[576][64][16]);
+void Load_Value_from_DRAM(int b, int n, data_t value_buffer[KEY_LENGTH_T][HEAD_DIM_H], MEM_TYPE value[576][64][16]);
+void Load_Bias_from_DRAM(int b, int n, data_t bias_buffer[QUERY_LENGTH_F][KEY_LENGTH_T], MEM_TYPE bias[64][16][64]);
+void Write_Attention_Back(int b, int n, data_t attention_out[576][64][16][64], data_t attention_out_buffer[QUERY_LENGTH_F][HEAD_DIM_H]);
 
 void Load_Query_ROW_Gran(int b, int n, data_t query_buffer[BATCH_B][QUERY_LENGTH_F][NUM_HEAD_N][HEAD_DIM_H], data_t query_row_gran[QUERY_LENGTH_F][HEAD_DIM_H]);
 void Load_Key_ROW_Gran(int b, int n, data_t key_buffer[BATCH_B][KEY_LENGTH_T][NUM_HEAD_N][HEAD_DIM_H], data_t key_row_gran[KEY_LENGTH_T][HEAD_DIM_H]);
 void Load_Value_ROW_Gran(int b, int n, data_t value_buffer[BATCH_B][KEY_LENGTH_T][NUM_HEAD_N][HEAD_DIM_H], data_t value_row_gran[KEY_LENGTH_T][HEAD_DIM_H]);
 void Load_Bias_ROW_Gran(int b, int n, data_t bias_buffer[BATCH_B][NUM_HEAD_N][QUERY_LENGTH_F][KEY_LENGTH_T], data_t bias_row_gran[QUERY_LENGTH_F][KEY_LENGTH_T]);
 
-void Write_Attention_Back(int b, int n, data_t attention_out_buffer[BATCH_B][QUERY_LENGTH_F][NUM_HEAD_N][HEAD_DIM_H], data_t attention_out_row_gran[QUERY_LENGTH_F][HEAD_DIM_H]);
+//void Write_Attention_Back(int b, int n, data_t attention_out_buffer[BATCH_B][QUERY_LENGTH_F][NUM_HEAD_N][HEAD_DIM_H], data_t attention_out_row_gran[QUERY_LENGTH_F][HEAD_DIM_H]);
 
 void Fused_Logit_Operator(data_t query_buffer[BATCH_B][QUERY_LENGTH_F][NUM_HEAD_N][HEAD_DIM_H], data_t key_buffer[BATCH_B][KEY_LENGTH_T][NUM_HEAD_N][HEAD_DIM_H], data_t bias_buffer[BATCH_B][NUM_HEAD_N][QUERY_LENGTH_F][KEY_LENGTH_T], data_t out_buffer[BATCH_B][NUM_HEAD_N][QUERY_LENGTH_F][KEY_LENGTH_T]);
 void Softmax(data_t logit_out[BATCH_B][NUM_HEAD_N][QUERY_LENGTH_F][KEY_LENGTH_T], data_t softmanx_out[BATCH_B][NUM_HEAD_N][QUERY_LENGTH_F][KEY_LENGTH_T]);
@@ -79,6 +82,12 @@ void Save_Partial_Output();
 void Store_Output_to_DRAM(data_t attention_out_buffer[64][64][16][64], data_t attention_out[576][64][16][64], int idx);
 
 
-void FlatDataflow(data_t query[576][64][16][64], data_t key[576][64][16][64], data_t value[576][64][16][64], data_t bias[64][16][64][64], data_t attention_out[576][64][16][64]);
+void FlatDataflow(MEM_TYPE query[576][64][16], MEM_TYPE key[576][64][16], MEM_TYPE value[576][64][16], MEM_TYPE bias[64][16][64], data_t attention_out[576][64][16][64]);
 
+
+
+void Load_Query_from_DRAM_old(data_t query_buffer[BATCH_B][QUERY_LENGTH_F][NUM_HEAD_N][HEAD_DIM_H], data_t query[576][64][16][64], int idx);
+void Load_Key_from_DRAM_old(data_t key_buffer[BATCH_B][KEY_LENGTH_T][NUM_HEAD_N][HEAD_DIM_H], data_t key[576][64][16][64], int idx);
+void Load_Value_from_DRAM_old(data_t value_buffer[BATCH_B][KEY_LENGTH_T][NUM_HEAD_N][HEAD_DIM_H], data_t value[576][64][16][64], int idx);
+void Load_Bias_from_DRAM_old(data_t bias_buffer[BATCH_B][NUM_HEAD_N][QUERY_LENGTH_F][KEY_LENGTH_T], data_t bias[64][16][64][64], int idx);
 #endif // MACRO
