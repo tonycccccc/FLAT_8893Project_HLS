@@ -47,7 +47,6 @@ void FlatDataflow(
 
         //Save_Partial_Output();
         Store_Output_to_DRAM(attention_out_buffer, attention_out, idx);
-
     }
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////

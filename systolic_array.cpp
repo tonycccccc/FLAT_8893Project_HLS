@@ -9,18 +9,6 @@ void Inter_Softmax(data_t logit[QUERY_LENGTH_F][KEY_LENGTH_T], data_t softmax[QU
 		data_t buffer[KEY_LENGTH_T];
 		data_t max = max_arr[f];
 		data_t sum = 0;
-		data_t test = -1;
-		for (int i = 0; i < KEY_LENGTH_T; ++i)
-		{
-			if (test < logit[f][i])
-			{
-				test = logit[f][i];
-			}
-		}
-		if (test != max)
-		{
-			std::cout << test << " " << max << std::endl;
-		}
 		// max = test;
 		for (int t = 0; t < KEY_LENGTH_T; ++t) {
 			buffer[t] = exp(logit[f][t] - test);
