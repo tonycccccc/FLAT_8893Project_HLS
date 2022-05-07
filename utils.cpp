@@ -106,46 +106,46 @@ void Store_Output_to_DRAM_old(data_t attention_out_buffer[64][64][16][64], data_
     }
 }
 
-void Load_Query_ROW_Gran(int b, int n, data_t query_buffer[BATCH_B][QUERY_LENGTH_F][NUM_HEAD_N][HEAD_DIM_H], data_t query_row_gran[QUERY_LENGTH_F][HEAD_DIM_H])
+void Load_Query_ROW_Gran(int b, int n, data_t query_row_gran[QUERY_LENGTH_F][HEAD_DIM_H], data_t query[576][64][16][64])
 {
-    for (size_t i = 0; i < QUERY_LENGTH_F; ++i)
+    for (int i = 0; i < QUERY_LENGTH_F; ++i)
     {
-        for (size_t j = 0; j < NUM_HEAD_N; ++j)
+        for (int j = 0; j < NUM_HEAD_N; ++j)
         {
-            query_row_gran[i][j] = query_buffer[b][i][n][j];
+            query_row_gran[i][j] = query[b][i][n][j];
         }
     }
 }
 
-void Load_Key_ROW_Gran(int b, int n, data_t key_buffer[BATCH_B][KEY_LENGTH_T][NUM_HEAD_N][HEAD_DIM_H], data_t key_row_gran[KEY_LENGTH_T][HEAD_DIM_H])
+void Load_Key_ROW_Gran(int b, int n, data_t key_row_gran[KEY_LENGTH_T][HEAD_DIM_H], data_t key[576][64][16][64])
 {
-    for (size_t i = 0; i < KEY_LENGTH_T; ++i)
+    for (int i = 0; i < KEY_LENGTH_T; ++i)
     {
-        for (size_t j = 0; j < HEAD_DIM_H; ++j)
+        for (int j = 0; j < HEAD_DIM_H; ++j)
         {
-            key_row_gran[i][j] = key_buffer[b][i][n][j];
+            key_row_gran[i][j] = key[b][i][n][j];
         }
     }
 }
 
-void Load_Value_ROW_Gran(int b, int n, data_t value_buffer[BATCH_B][KEY_LENGTH_T][NUM_HEAD_N][HEAD_DIM_H], data_t value_row_gran[KEY_LENGTH_T][HEAD_DIM_H])
+void Load_Value_ROW_Gran(int b, int n, data_t value_row_gran[KEY_LENGTH_T][HEAD_DIM_H], data_t value[576][64][16][64])
 {
-    for (size_t i = 0; i < KEY_LENGTH_T; ++i)
+    for (int i = 0; i < KEY_LENGTH_T; ++i)
     {
-        for (size_t j = 0; j < HEAD_DIM_H; ++j)
+        for (int j = 0; j < HEAD_DIM_H; ++j)
         {
-            value_row_gran[i][j] = value_buffer[b][i][n][j];
+            value_row_gran[i][j] = value[b][i][n][j];
         }
     }
 }
 
-void Load_Bias_ROW_Gran(int b, int n, data_t bias_buffer[BATCH_B][NUM_HEAD_N][QUERY_LENGTH_F][KEY_LENGTH_T], data_t bias_row_gran[QUERY_LENGTH_F][KEY_LENGTH_T])
+void Load_Bias_ROW_Gran(int b, int n,  data_t bias_row_gran[QUERY_LENGTH_F][KEY_LENGTH_T], data_t bias[576][16][64][64])
 {
-    for (size_t i = 0; i < QUERY_LENGTH_F; ++i)
+    for (int i = 0; i < QUERY_LENGTH_F; ++i)
     {
-        for (size_t j = 0; j < KEY_LENGTH_T; ++j)
+        for (int j = 0; j < KEY_LENGTH_T; ++j)
         {
-            bias_row_gran[i][j] = bias_buffer[b][n][i][j];
+            bias_row_gran[i][j] = bias[b][n][i][j];
         }
     }
 }
@@ -161,6 +161,7 @@ void Load_Bias_ROW_Gran(int b, int n, data_t bias_buffer[BATCH_B][NUM_HEAD_N][QU
 //     }
 // }
 
+//These functions are for DRAM burst read
 void Load_Query_from_DRAM(int b, int n, data_t query_buffer[QUERY_LENGTH_F][HEAD_DIM_H], MEM_TYPE query[576][64][16])
 {
 

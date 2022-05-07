@@ -4,20 +4,24 @@
 #include "hls_math.h"
 
 void FlatDataflow(
-    MEM_TYPE query[576][64][16],
-    MEM_TYPE key[576][64][16],
-    MEM_TYPE value[576][64][16],
-    MEM_TYPE bias[64][16][64],
+    data_t query[576][64][16][64],  
+    data_t key[576][64][16][64],
+    data_t value[576][64][16][64],
+    data_t bias[64][16][64][64],
     data_t attention_out[576][64][16][64])
+    // MEM_TYPE query[576][64][16],
+    // MEM_TYPE key[576][64][16],
+    // MEM_TYPE value[576][64][16],
+    // MEM_TYPE bias[64][16][64],
 {
 //--------------------------------------------------------------------------
 // Defines interface IO ports for HLS.
 //--------------------------------------------------------------------------
-#pragma HLS INTERFACE m_axi port = query bundle = Query offset=slave
-#pragma HLS INTERFACE m_axi port = key bundle = Key offset=slave
-#pragma HLS INTERFACE m_axi port = value bundle = Value_Bias offset=slave
-#pragma HLS INTERFACE m_axi port = bias bundle = Value_Bias offset=slave
-#pragma HLS INTERFACE m_axi port = attention_out bundle = Attention_out offset=slave
+#pragma HLS INTERFACE m_axi port=query bundle=Query offset=slave
+#pragma HLS INTERFACE m_axi port=key bundle=Key offset=slave
+#pragma HLS INTERFACE m_axi port=value bundle=Value_Bias offset=slave
+#pragma HLS INTERFACE m_axi port=bias bundle=Value_Bias offset=slave
+#pragma HLS INTERFACE m_axi port=attention_out bundle=Attention_out offset=slave
 
 #pragma HLS INTERFACE s_axilite register port = return
     data_t query_buffer_ping[QUERY_LENGTH_F][HEAD_DIM_H], query_buffer_pong[QUERY_LENGTH_F][HEAD_DIM_H];
@@ -30,17 +34,29 @@ void FlatDataflow(
     data_t attention_out_ping[QUERY_LENGTH_F][HEAD_DIM_H], attention_out_pong[QUERY_LENGTH_F][HEAD_DIM_H];
 
     //Partition the array for DRAM burst read
-#pragma HLS ARRAY_PARTITION variable=query_buffer_ping dim=1 type=complete
-#pragma HLS ARRAY_PARTITION variable=query_buffer_pong dim=1 type=complete
+#pragma HLS ARRAY_PARTITION variable=query_buffer_ping dim=0 type=cyclic factor=4
+#pragma HLS ARRAY_PARTITION variable=query_buffer_pong dim=0 type=cyclic factor=4
 
-#pragma HLS ARRAY_PARTITION variable=key_buffer_ping dim=0 type=complete
-#pragma HLS ARRAY_PARTITION variable=key_buffer_pong dim=0 type=complete
+#pragma HLS ARRAY_PARTITION variable=key_buffer_ping dim=0 type=block factor=4
+#pragma HLS ARRAY_PARTITION variable=key_buffer_pong dim=0 type=block factor=4
 
-#pragma HLS ARRAY_PARTITION variable=value_buffer_ping dim=0 type=complete
-#pragma HLS ARRAY_PARTITION variable=value_buffer_pong dim=0 type=complete
+#pragma HLS ARRAY_PARTITION variable=value_buffer_ping dim=0 type=block factor=4
+#pragma HLS ARRAY_PARTITION variable=value_buffer_pong dim=0 type=block factor=4
 
-#pragma HLS ARRAY_PARTITION variable=bias_buffer_ping dim=1 type=complete
-#pragma HLS ARRAY_PARTITION variable=bias_buffer_pong dim=1 type=complete
+#pragma HLS ARRAY_PARTITION variable=bias_buffer_ping dim=0 type=cyclic factor=4
+#pragma HLS ARRAY_PARTITION variable=bias_buffer_pong dim=0 type=cyclic factor=4
+
+#pragma HLS ARRAY_PARTITION variable=logit_ping dim=0 type=cyclic factor=4
+#pragma HLS ARRAY_PARTITION variable=logit_pong dim=0 type=cyclic factor=4
+
+#pragma HLS ARRAY_PARTITION variable=max_ping dim=0 type=complete
+#pragma HLS ARRAY_PARTITION variable=max_pong dim=0 type=complete
+
+#pragma HLS ARRAY_PARTITION variable=softmax_ping dim=0 type=cyclic factor=4
+#pragma HLS ARRAY_PARTITION variable=softmax_pong dim=0 type=cyclic factor=4
+
+#pragma HLS ARRAY_PARTITION variable=attention_out_ping dim=0 type=cyclic factor=4
+#pragma HLS ARRAY_PARTITION variable=attention_out_pong dim=0 type=cyclic factor=4
 
     // Loop through all batches at one time
     for (int b = 0; b < 576; ++b)
@@ -50,36 +66,36 @@ void FlatDataflow(
         {
             if (n == 0)
             {
-                Load_Query_from_DRAM(b, n, query_buffer_ping, query);
-                Load_Key_from_DRAM(b, n, key_buffer_ping, key);
-                Load_Bias_from_DRAM(b, n, bias_buffer_ping, bias);
+                Load_Query_ROW_Gran(b, n, query_buffer_ping, query);
+                Load_Key_ROW_Gran(b, n, key_buffer_ping, key);
+                Load_Bias_ROW_Gran(b, n, bias_buffer_ping, bias);
             }
             else if (n == 1)
             {
-                Load_Query_from_DRAM(b, n, query_buffer_pong, query);
-                Load_Key_from_DRAM(b, n, key_buffer_pong, key);
-                Load_Bias_from_DRAM(b, n, bias_buffer_pong, bias);
+                Load_Query_ROW_Gran(b, n, query_buffer_pong, query);
+                Load_Key_ROW_Gran(b, n, key_buffer_pong, key);
+                Load_Bias_ROW_Gran(b, n, bias_buffer_pong, bias);
 
                 computeLogit(query_buffer_ping, key_buffer_ping, bias_buffer_ping, logit_ping, max_ping);
             }
             else if (n == 2)
             {
-                Load_Query_from_DRAM(b, n, query_buffer_ping, query);
-                Load_Key_from_DRAM(b, n, key_buffer_ping, key);
-                Load_Bias_from_DRAM(b, n, bias_buffer_ping, bias);
+                Load_Query_ROW_Gran(b, n, query_buffer_ping, query);
+                Load_Key_ROW_Gran(b, n, key_buffer_ping, key);
+                Load_Bias_ROW_Gran(b, n, bias_buffer_ping, bias);
 
-                Load_Value_from_DRAM(b, n - 2, value_buffer_ping, value);
+                Load_Value_ROW_Gran(b, n - 2, value_buffer_ping, value);
 
                 computeLogit(query_buffer_pong, key_buffer_pong, bias_buffer_pong, logit_pong, max_pong);
                 Inter_Softmax(logit_ping, softmax_pong, max_ping);
             }
             else if (n == 3)
             {
-                Load_Query_from_DRAM(b, n, query_buffer_pong, query);
-                Load_Key_from_DRAM(b, n, key_buffer_pong, key);
-                Load_Bias_from_DRAM(b, n, bias_buffer_pong, bias);
+                Load_Query_ROW_Gran(b, n, query_buffer_pong, query);
+                Load_Key_ROW_Gran(b, n, key_buffer_pong, key);
+                Load_Bias_ROW_Gran(b, n, bias_buffer_pong, bias);
 
-                Load_Value_from_DRAM(b, n - 2, value_buffer_pong, value);
+                Load_Value_ROW_Gran(b, n - 2, value_buffer_pong, value);
 
                 computeLogit(query_buffer_ping, key_buffer_ping, bias_buffer_ping, logit_ping, max_ping);
                 Inter_Softmax(logit_pong, softmax_ping, max_pong);
@@ -87,11 +103,11 @@ void FlatDataflow(
             }
             else if (n == 4)
             {
-                Load_Query_from_DRAM(b, n, query_buffer_ping, query);
-                Load_Key_from_DRAM(b, n, key_buffer_ping, key);
-                Load_Bias_from_DRAM(b, n, bias_buffer_ping, bias);
+                Load_Query_ROW_Gran(b, n, query_buffer_ping, query);
+                Load_Key_ROW_Gran(b, n, key_buffer_ping, key);
+                Load_Bias_ROW_Gran(b, n, bias_buffer_ping, bias);
 
-                Load_Value_from_DRAM(b, n - 2, value_buffer_ping, value);
+                Load_Value_ROW_Gran(b, n - 2, value_buffer_ping, value);
 
                 computeLogit(query_buffer_pong, key_buffer_pong, bias_buffer_pong, logit_pong, max_pong);
                 Inter_Softmax(logit_ping, softmax_pong, max_ping);
@@ -102,11 +118,11 @@ void FlatDataflow(
             {
                 if (n % 2 == 1)
                 {
-                    Load_Query_from_DRAM(b, n, query_buffer_pong, query);
-                    Load_Key_from_DRAM(b, n, key_buffer_pong, key);
-                    Load_Bias_from_DRAM(b, n, bias_buffer_pong, bias);
+                    Load_Query_ROW_Gran(b, n, query_buffer_pong, query);
+                    Load_Key_ROW_Gran(b, n, key_buffer_pong, key);
+                    Load_Bias_ROW_Gran(b, n, bias_buffer_pong, bias);
 
-                    Load_Value_from_DRAM(b, n - 2, value_buffer_pong, value);
+                    Load_Value_ROW_Gran(b, n - 2, value_buffer_pong, value);
 
                     computeLogit(query_buffer_ping, key_buffer_ping, bias_buffer_ping, logit_ping, max_ping);
                     Inter_Softmax(logit_pong, softmax_ping, max_pong);
@@ -115,11 +131,11 @@ void FlatDataflow(
                 }
                 else if (n % 2 == 0)
                 {
-                    Load_Query_from_DRAM(b, n, query_buffer_ping, query);
-                    Load_Key_from_DRAM(b, n, key_buffer_ping, key);
-                    Load_Bias_from_DRAM(b, n, bias_buffer_ping, bias);
+                    Load_Query_ROW_Gran(b, n, query_buffer_ping, query);
+                    Load_Key_ROW_Gran(b, n, key_buffer_ping, key);
+                    Load_Bias_ROW_Gran(b, n, bias_buffer_ping, bias);
 
-                    Load_Value_from_DRAM(b, n - 2, value_buffer_ping, value);
+                    Load_Value_ROW_Gran(b, n - 2, value_buffer_ping, value);
 
                     computeLogit(query_buffer_pong, key_buffer_pong, bias_buffer_pong, logit_pong, max_pong);
                     Inter_Softmax(logit_ping, softmax_pong, max_ping);
@@ -130,7 +146,7 @@ void FlatDataflow(
             else
             {
                 // iteration 1
-                Load_Value_from_DRAM(b, n - 1, value_buffer_pong, value);
+                Load_Value_ROW_Gran(b, n - 1, value_buffer_pong, value);
 
                 computeLogit(query_buffer_ping, key_buffer_ping, bias_buffer_ping, logit_ping, max_ping);
                 Inter_Softmax(logit_pong, softmax_ping, max_pong);
@@ -138,7 +154,7 @@ void FlatDataflow(
                 Write_Attention_Back(b, n - 3, attention_out, attention_out_pong);
 
                 // iteration 2
-                Load_Value_from_DRAM(b, n, value_buffer_ping, value);
+                Load_Value_ROW_Gran(b, n, value_buffer_ping, value);
 
                 Inter_Softmax(logit_ping, softmax_pong, max_ping);
                 computeAttention(softmax_ping, value_buffer_pong, attention_out_pong);
