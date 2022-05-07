@@ -55,10 +55,10 @@ void Load_Value_from_DRAM(int b, int n, data_t value_buffer[KEY_LENGTH_T][HEAD_D
 void Load_Bias_from_DRAM(int b, int n, data_t bias_buffer[QUERY_LENGTH_F][KEY_LENGTH_T], MEM_TYPE bias[64][16][64]);
 void Write_Attention_Back(int b, int n, data_t attention_out[576][64][16][64], data_t attention_out_buffer[QUERY_LENGTH_F][HEAD_DIM_H]);
 
-void Load_Query_ROW_Gran(int b, int n, data_t query_buffer[BATCH_B][QUERY_LENGTH_F][NUM_HEAD_N][HEAD_DIM_H], data_t query_row_gran[QUERY_LENGTH_F][HEAD_DIM_H]);
-void Load_Key_ROW_Gran(int b, int n, data_t key_buffer[BATCH_B][KEY_LENGTH_T][NUM_HEAD_N][HEAD_DIM_H], data_t key_row_gran[KEY_LENGTH_T][HEAD_DIM_H]);
-void Load_Value_ROW_Gran(int b, int n, data_t value_buffer[BATCH_B][KEY_LENGTH_T][NUM_HEAD_N][HEAD_DIM_H], data_t value_row_gran[KEY_LENGTH_T][HEAD_DIM_H]);
-void Load_Bias_ROW_Gran(int b, int n, data_t bias_buffer[BATCH_B][NUM_HEAD_N][QUERY_LENGTH_F][KEY_LENGTH_T], data_t bias_row_gran[QUERY_LENGTH_F][KEY_LENGTH_T]);
+void Load_Query_ROW_Gran(int b, int n, data_t query_row_gran[QUERY_LENGTH_F][HEAD_DIM_H], data_t query[576][64][16][64]);
+void Load_Key_ROW_Gran(int b, int n, data_t key_row_gran[KEY_LENGTH_T][HEAD_DIM_H], data_t key[576][64][16][64]);
+void Load_Value_ROW_Gran(int b, int n, data_t value_row_gran[KEY_LENGTH_T][HEAD_DIM_H], data_t value[576][64][16][64]);
+void Load_Bias_ROW_Gran(int b, int n,  data_t bias_row_gran[QUERY_LENGTH_F][KEY_LENGTH_T], data_t bias[576][16][64][64]);
 
 //void Write_Attention_Back(int b, int n, data_t attention_out_buffer[BATCH_B][QUERY_LENGTH_F][NUM_HEAD_N][HEAD_DIM_H], data_t attention_out_row_gran[QUERY_LENGTH_F][HEAD_DIM_H]);
 
@@ -82,8 +82,9 @@ void Save_Partial_Output();
 void Store_Output_to_DRAM(data_t attention_out_buffer[64][64][16][64], data_t attention_out[576][64][16][64], int idx);
 
 
-void FlatDataflow(MEM_TYPE query[576][64][16], MEM_TYPE key[576][64][16], MEM_TYPE value[576][64][16], MEM_TYPE bias[64][16][64], data_t attention_out[576][64][16][64]);
+void FlatDataflow(data_t query[576][64][16][64], data_t key[576][64][16][64], data_t value[576][64][16][64], data_t bias[64][16][64][64], data_t attention_out[576][64][16][64]);
 
+//void FlatDataflow(MEM_TYPE query[576][64][16], MEM_TYPE key[576][64][16], MEM_TYPE value[576][64][16], MEM_TYPE bias[64][16][64], data_t attention_out[576][64][16][64]);
 
 
 void Load_Query_from_DRAM_old(data_t query_buffer[BATCH_B][QUERY_LENGTH_F][NUM_HEAD_N][HEAD_DIM_H], data_t query[576][64][16][64], int idx);
