@@ -7,6 +7,7 @@ set_top FlatDataflow
 # Add design files
 add_files flat.cpp
 add_files utils.cpp
+add_files systolic_array.cpp
 # add_files flat.cpp 
 # Add test bench & files
 # add_files -tb sim.cpp
